@@ -3,9 +3,8 @@ import {Text, TouchableOpacity} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import useThemeStore from '../stores/useThemeStore';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
-import Feather from '@react-native-vector-icons/feather';
 import themes from '../styles/themes';
-import textStyles from '../styles/texts';
+import {useTextStyles} from '../styles';
 
 const MainScreen = () => {
   const {selectedTheme, selectTheme} = useThemeStore();
@@ -18,13 +17,14 @@ const MainScreen = () => {
     selectTheme(themes.darkTheme);
   };
 
+  const {font16Bold} = useTextStyles();
+
   return (
     <SafeAreaView style={{backgroundColor: selectedTheme.backgourndColor}}>
       <TouchableOpacity onPress={onPress}>
-        <Text style={textStyles.defaultText}>안녕하세요!!</Text>
+        <Text style={font16Bold}>안녕하세요!!</Text>
         <Text>안녕하세요!!</Text>
         <FontAwesome6 name='gear' iconStyle='solid' />
-        <Feather name={'gift'} color='#ff0000' size={20} />
       </TouchableOpacity>
     </SafeAreaView>
   );

@@ -1,4 +1,6 @@
 import {Platform, TextStyle} from 'react-native';
+import {sizeConverter} from '../../utils';
+import {useThemeStore} from '../../stores';
 
 const customFonts = {
   bold: Platform.OS === 'ios' ? 'GangwonEduAllBold' : '강원교육모두 Bold',
@@ -9,13 +11,43 @@ const customFonts = {
     Platform.OS === 'ios' ? 'GangwonEduHyeonokTMedium' : '강원교육현옥샘',
 };
 
-const defaultText: TextStyle = {
-  fontFamily: customFonts.bold,
-  color: 'red',
+export const useTextStyles = () => {
+  const {selectedTheme} = useThemeStore();
+
+  const font14Bold: TextStyle = {
+    fontFamily: customFonts.bold,
+    fontSize: sizeConverter(14),
+    includeFontPadding: false,
+    color: selectedTheme.textColor,
+  };
+
+  const font16Bold: TextStyle = {
+    fontFamily: customFonts.bold,
+    fontSize: sizeConverter(16),
+    includeFontPadding: false,
+    color: selectedTheme.textColor,
+  };
+
+  const font18Bold: TextStyle = {
+    fontFamily: customFonts.bold,
+    fontSize: sizeConverter(17),
+    includeFontPadding: false,
+    color: selectedTheme.textColor,
+  };
+
+  const font20Bold: TextStyle = {
+    fontFamily: customFonts.bold,
+    fontSize: sizeConverter(20),
+    includeFontPadding: false,
+    color: selectedTheme.textColor,
+  };
+
+  return {
+    font14Bold,
+    font16Bold,
+    font18Bold,
+    font20Bold,
+  };
 };
 
-const textStyles = {
-  defaultText,
-};
-
-export default textStyles;
+export default useTextStyles;
