@@ -9,8 +9,13 @@
 /* Begin PBXBuildFile section */
 		0C80B921A6F3F58F76C31292 /* libPods-amsan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-amsan.a */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		2858B3F6DDC64450B516BF82 /* 강원교육튼튼.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E4471E5346AB488E86AD8E18 /* 강원교육튼튼.ttf */; };
+		61191510990A4920891F4254 /* 강원교육현옥샘.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 64E4EBED76BD4549AA785C78 /* 강원교육현옥샘.ttf */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		88F105480AE243FC97F2F8AF /* 강원교육모두 Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 78D267237AC646E1A2E1B502 /* 강원교육모두 Light.ttf */; };
+		EDFE8B1DC5C742F89E5E7306 /* 강원교육모두 Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 98A4622958274C44B4AF8495 /* 강원교육모두 Bold.ttf */; };
+		F2D6F4A49FDD417182A79B40 /* 강원교육새음.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9196D1501B9046619A137DDB /* 강원교육새음.ttf */; };
 		F3A5AA0FA64068A87B6845CD /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
@@ -22,8 +27,13 @@
 		3B4392A12AC88292D35C810B /* Pods-amsan.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-amsan.debug.xcconfig"; path = "Target Support Files/Pods-amsan/Pods-amsan.debug.xcconfig"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-amsan.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-amsan.release.xcconfig"; path = "Target Support Files/Pods-amsan/Pods-amsan.release.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-amsan.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-amsan.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		64E4EBED76BD4549AA785C78 /* 강원교육현옥샘.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "강원교육현옥샘.ttf"; path = "../assets/fonts/강원교육현옥샘.ttf"; sourceTree = "<group>"; };
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = amsan/AppDelegate.swift; sourceTree = "<group>"; };
+		78D267237AC646E1A2E1B502 /* 강원교육모두 Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "강원교육모두 Light.ttf"; path = "../assets/fonts/강원교육모두 Light.ttf"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = amsan/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		9196D1501B9046619A137DDB /* 강원교육새음.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "강원교육새음.ttf"; path = "../assets/fonts/강원교육새음.ttf"; sourceTree = "<group>"; };
+		98A4622958274C44B4AF8495 /* 강원교육모두 Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "강원교육모두 Bold.ttf"; path = "../assets/fonts/강원교육모두 Bold.ttf"; sourceTree = "<group>"; };
+		E4471E5346AB488E86AD8E18 /* 강원교육튼튼.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "강원교육튼튼.ttf"; path = "../assets/fonts/강원교육튼튼.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -75,6 +85,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
+				D3069E2E388B40A19E719566 /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -96,6 +107,19 @@
 				5709B34CF0A7D63546082F79 /* Pods-amsan.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		D3069E2E388B40A19E719566 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				98A4622958274C44B4AF8495 /* 강원교육모두 Bold.ttf */,
+				78D267237AC646E1A2E1B502 /* 강원교육모두 Light.ttf */,
+				9196D1501B9046619A137DDB /* 강원교육새음.ttf */,
+				E4471E5346AB488E86AD8E18 /* 강원교육튼튼.ttf */,
+				64E4EBED76BD4549AA785C78 /* 강원교육현옥샘.ttf */,
+			);
+			name = Resources;
+			path = "";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -161,6 +185,11 @@
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				F3A5AA0FA64068A87B6845CD /* PrivacyInfo.xcprivacy in Resources */,
+				EDFE8B1DC5C742F89E5E7306 /* 강원교육모두 Bold.ttf in Resources */,
+				88F105480AE243FC97F2F8AF /* 강원교육모두 Light.ttf in Resources */,
+				F2D6F4A49FDD417182A79B40 /* 강원교육새음.ttf in Resources */,
+				2858B3F6DDC64450B516BF82 /* 강원교육튼튼.ttf in Resources */,
+				61191510990A4920891F4254 /* 강원교육현옥샘.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

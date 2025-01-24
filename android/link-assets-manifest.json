@@ -1,0 +1,25 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "assets/fonts/강원교육모두 Bold.ttf",
+      "sha1": "3d79faadb80e6097dcc18a683785e507da4c6eb4"
+    },
+    {
+      "path": "assets/fonts/강원교육모두 Light.ttf",
+      "sha1": "83b78e96a1626533320db5d55adbd06e1db6e827"
+    },
+    {
+      "path": "assets/fonts/강원교육새음.ttf",
+      "sha1": "d142b81c4f416632a4e49719a5b289c63f5f5b2f"
+    },
+    {
+      "path": "assets/fonts/강원교육튼튼.ttf",
+      "sha1": "c0c04b5ea24c96b6168b32c53d3f6ec4a910a5dc"
+    },
+    {
+      "path": "assets/fonts/강원교육현옥샘.ttf",
+      "sha1": "260e8dec5e9ead00620c3bcbe6832978a31f5975"
+    }
+  ]
+}
