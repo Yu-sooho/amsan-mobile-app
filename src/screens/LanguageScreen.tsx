@@ -55,13 +55,13 @@ const Content: React.FC = () => {
         style={styles.arrowButton}
         onPress={onPressKor}
         text={selectedLanguage.kor}
-        isActive={selectedLanguage === language.kor}
+        isActive={selectedLanguage.id === language.kor.id}
       />
       <CheckButton
         style={styles.arrowButton}
         onPress={onPressEng}
         text={selectedLanguage.eng}
-        isActive={selectedLanguage === language.eng}
+        isActive={selectedLanguage.id === language.eng.id}
       />
     </View>
   );

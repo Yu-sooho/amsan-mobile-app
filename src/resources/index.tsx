@@ -1,6 +1,7 @@
 import {LanguageProps} from '../types/LanguageTypes';
 
 const eng: LanguageProps = {
+  id: 'eng',
   settingScreen: 'Setting',
   theme: 'Theme',
   language: 'Language',
@@ -12,6 +13,7 @@ const eng: LanguageProps = {
 };
 
 const kor: LanguageProps = {
+  id: 'kor',
   settingScreen: '설정',
   theme: '테마',
   language: '언어',

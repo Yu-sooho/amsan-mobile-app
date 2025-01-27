@@ -4,6 +4,7 @@ export type LanguageTypes = {
 };
 
 export type LanguageProps = {
+  id: 'kor' | 'eng';
   settingScreen: string;
   theme: string;
   language: string;
