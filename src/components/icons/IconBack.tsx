@@ -3,15 +3,15 @@ import Feather from '@react-native-vector-icons/feather';
 import {useThemeStore} from '../../stores';
 import {sizeConverter} from '../../utils';
 
-const IconSetting = () => {
+const IconBack = () => {
   const {selectedTheme} = useThemeStore();
   return (
     <Feather
-      name={'settings'}
+      name={'chevron-left'}
       color={selectedTheme.textColor}
-      size={sizeConverter(24)}
+      size={sizeConverter(32)}
     />
   );
 };
 
-export default IconSetting;
+export default IconBack;

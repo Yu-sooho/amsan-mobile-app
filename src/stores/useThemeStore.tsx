@@ -7,6 +7,8 @@ import themes from '../styles/themes';
 interface ThemeState {
   selectedTheme: ThemeProps;
   selectTheme: (theme: ThemeProps) => void;
+  fontSize: number;
+  setFontSize: (fontSize: number) => void;
 }
 
 const useThemeStore = create(
@@ -14,6 +16,8 @@ const useThemeStore = create(
     set => ({
       selectedTheme: themes.darkTheme,
       selectTheme: (theme: ThemeProps) => set(() => ({selectedTheme: theme})),
+      fontSize: 1,
+      setFontSize: (fontSize: number) => set(() => ({fontSize: fontSize})),
     }),
     {
       name: 'theme-storage',

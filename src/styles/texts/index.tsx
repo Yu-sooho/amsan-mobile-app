@@ -12,32 +12,32 @@ const customFonts = {
 };
 
 export const useTextStyles = () => {
-  const {selectedTheme} = useThemeStore();
+  const {selectedTheme, fontSize} = useThemeStore();
 
   const font14Bold: TextStyle = {
     fontFamily: customFonts.bold,
-    fontSize: sizeConverter(14),
+    fontSize: sizeConverter(14) + fontSize,
     includeFontPadding: false,
     color: selectedTheme.textColor,
   };
 
   const font16Bold: TextStyle = {
     fontFamily: customFonts.bold,
-    fontSize: sizeConverter(16),
+    fontSize: sizeConverter(16) + fontSize,
     includeFontPadding: false,
     color: selectedTheme.textColor,
   };
 
   const font18Bold: TextStyle = {
     fontFamily: customFonts.bold,
-    fontSize: sizeConverter(17),
+    fontSize: sizeConverter(17) + fontSize,
     includeFontPadding: false,
     color: selectedTheme.textColor,
   };
 
   const font20Bold: TextStyle = {
     fontFamily: customFonts.bold,
-    fontSize: sizeConverter(20),
+    fontSize: sizeConverter(20) + fontSize,
     includeFontPadding: false,
     color: selectedTheme.textColor,
   };

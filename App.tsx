@@ -1,25 +1,21 @@
-
-import { NavigationContainer } from '@react-navigation/native';
+import {NavigationContainer} from '@react-navigation/native';
 import React from 'react';
-import {
-  StyleSheet,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { RootStackNavigator } from './src';
+import {StyleSheet, View} from 'react-native';
+import {RootStackNavigator} from './src';
 
 function App(): React.JSX.Element {
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <NavigationContainer>
         <RootStackNavigator />
       </NavigationContainer>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container:{
-    flex:1,
+  container: {
+    flex: 1,
   },
 });
 

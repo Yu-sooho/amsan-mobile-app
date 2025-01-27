@@ -1,24 +1,25 @@
 // In App.js in a new project
 
 import * as React from 'react';
-import {View, Text} from 'react-native';
 import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
-import {MainScreen} from '../screens';
+import {
+  FontSizeScreen,
+  LanguageScreen,
+  MainScreen,
+  SettingScreen,
+  ThemeScreen,
+} from '../screens';
+import {RootStackProps} from '../types/NavigationTypes';
 
-const RootStack = createStackNavigator({
+const RootStack = createStackNavigator<RootStackProps>({
   screens: {
-    Home: HomeScreen,
-    Profile: HomeScreen,
+    MainScreen: MainScreen,
+    SettingScreen: SettingScreen,
+    ThemeScreen: ThemeScreen,
+    LanguageScreen: LanguageScreen,
+    FontSizeScreen: FontSizeScreen,
   },
 });
-
-function HomeScreen() {
-  return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-      <Text>Home Screen</Text>
-    </View>
-  );
-}
 
 const RootStackNavigator = () => {
   return (
@@ -27,10 +28,15 @@ const RootStackNavigator = () => {
       screenOptions={() => ({
         headerShown: false,
         gestureEnabled: true,
-        ...TransitionPresets.ModalPresentationIOS,
+        ...TransitionPresets.SlideFromRightIOS,
       })}>
       <RootStack.Screen name='MainScreen' component={MainScreen} />
-      <RootStack.Screen name='Profile' component={HomeScreen} />
+
+      {/* 설정 화면들 */}
+      <RootStack.Screen name='SettingScreen' component={SettingScreen} />
+      <RootStack.Screen name='ThemeScreen' component={ThemeScreen} />
+      <RootStack.Screen name='LanguageScreen' component={LanguageScreen} />
+      <RootStack.Screen name='FontSizeScreen' component={FontSizeScreen} />
     </RootStack.Navigator>
   );
 };
