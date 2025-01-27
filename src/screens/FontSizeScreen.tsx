@@ -4,6 +4,10 @@ import useThemeStore from '../stores/useThemeStore';
 import {CustomHeader} from '../components';
 import {StyleSheet, Text, View} from 'react-native';
 import useLanguageStore from '../stores/useLanguageStore';
+import Slider from '@react-native-community/slider';
+import {useTextStyles} from '../styles';
+import {sizeConverter} from '../utils';
+
 const FontSizeScreen: React.FC = () => {
   const {selectedTheme} = useThemeStore();
   const {selectedLanguage} = useLanguageStore();
@@ -28,9 +32,43 @@ const FontSizeScreen: React.FC = () => {
 };
 
 const Content: React.FC = () => {
+  const {fontSize, setFontSize, selectedTheme} = useThemeStore();
+  const {font14Bold} = useTextStyles();
+
+  const handleSizeChange = (value: number) => {
+    setFontSize(value);
+  };
+
+  const styles = StyleSheet.create({
+    container: {
+      alignItems: 'center',
+      flex: 1,
+      paddingTop: sizeConverter(44),
+    },
+    label: {
+      ...font14Bold,
+    },
+    slider: {
+      height: 40,
+      paddingTop: sizeConverter(32),
+      width: sizeConverter(300),
+    },
+  });
+
   return (
-    <View>
-      <Text>123</Text>
+    <View style={styles.container}>
+      <Text style={styles.label}>{Math.round(fontSize)}</Text>
+      <Slider
+        style={styles.slider}
+        minimumValue={1}
+        maximumValue={10}
+        step={1}
+        value={fontSize}
+        onValueChange={handleSizeChange}
+        minimumTrackTintColor={selectedTheme.textColor}
+        maximumTrackTintColor={selectedTheme.textColor}
+        thumbTintColor={selectedTheme.textColor}
+      />
     </View>
   );
 };

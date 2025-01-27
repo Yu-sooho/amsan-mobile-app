@@ -56,13 +56,13 @@ const Content: React.FC = () => {
         style={styles.arrowButton}
         onPress={onPressLight}
         text={selectedLanguage.light}
-        isActive={selectedTheme === themes.lightTheme}
+        isActive={selectedTheme.id === themes.lightTheme.id}
       />
       <CheckButton
         style={styles.arrowButton}
         onPress={onPressDark}
         text={selectedLanguage.dark}
-        isActive={selectedTheme === themes.darkTheme}
+        isActive={selectedTheme.id === themes.darkTheme.id}
       />
     </View>
   );
