@@ -9,16 +9,16 @@ type IconProps = {
   size?: number;
 };
 
-const IconCheck: React.FC<IconProps> = ({style, size = sizeConverter(34)}) => {
+const IconDivide: React.FC<IconProps> = ({style, size = sizeConverter(34)}) => {
   const {selectedTheme} = useThemeStore();
   return (
     <Feather
       style={style}
-      name={'check'}
+      name={'divide'}
       color={selectedTheme.textColor}
       size={size}
     />
   );
 };
 
-export default IconCheck;
+export default IconDivide;

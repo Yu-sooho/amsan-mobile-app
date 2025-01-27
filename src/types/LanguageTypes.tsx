@@ -13,4 +13,12 @@ export type LanguageProps = {
   light: string;
   eng: string;
   kor: string;
+  plus: string;
+  division: string;
+  subtraction: string;
+  multiply: string;
+  mix: string;
+  custom: string;
+  myInfo: string;
+  ranking: string;
 };

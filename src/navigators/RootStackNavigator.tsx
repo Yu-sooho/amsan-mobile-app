@@ -5,7 +5,10 @@ import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 import {
   FontSizeScreen,
   LanguageScreen,
+  LoginScreen,
   MainScreen,
+  MyInfoScreen,
+  PlayScreen,
   SettingScreen,
   ThemeScreen,
 } from '../screens';
@@ -18,6 +21,9 @@ const RootStack = createStackNavigator<RootStackProps>({
     ThemeScreen: ThemeScreen,
     LanguageScreen: LanguageScreen,
     FontSizeScreen: FontSizeScreen,
+    PlayScreen: PlayScreen,
+    MyInfoScreen: MyInfoScreen,
+    LoginScreen: LoginScreen,
   },
 });
 
@@ -37,6 +43,9 @@ const RootStackNavigator = () => {
       <RootStack.Screen name='ThemeScreen' component={ThemeScreen} />
       <RootStack.Screen name='LanguageScreen' component={LanguageScreen} />
       <RootStack.Screen name='FontSizeScreen' component={FontSizeScreen} />
+      <RootStack.Screen name='PlayScreen' component={PlayScreen} />
+      <RootStack.Screen name='MyInfoScreen' component={MyInfoScreen} />
+      <RootStack.Screen name='LoginScreen' component={LoginScreen} />
     </RootStack.Navigator>
   );
 };

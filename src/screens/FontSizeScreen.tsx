@@ -1,12 +1,11 @@
 import React from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import useThemeStore from '../stores/useThemeStore';
 import {CustomHeader} from '../components';
 import {StyleSheet, Text, View} from 'react-native';
-import useLanguageStore from '../stores/useLanguageStore';
 import Slider from '@react-native-community/slider';
 import {useTextStyles} from '../styles';
 import {sizeConverter} from '../utils';
+import {useLanguageStore, useThemeStore} from '../stores';
 
 const FontSizeScreen: React.FC = () => {
   const {selectedTheme} = useThemeStore();

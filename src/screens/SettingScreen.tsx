@@ -1,13 +1,12 @@
 import React from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import useThemeStore from '../stores/useThemeStore';
 import {ArrowButton, CustomHeader} from '../components';
 import {StyleSheet, View} from 'react-native';
-import useLanguageStore from '../stores/useLanguageStore';
 import {RootStackProps} from '../types/NavigationTypes';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {useNavigation} from '@react-navigation/native';
 import {sizeConverter} from '../utils';
+import {useLanguageStore, useThemeStore} from '../stores';
 
 const SettingScreen: React.FC = () => {
   const {selectedTheme} = useThemeStore();

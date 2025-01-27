@@ -9,16 +9,19 @@ type IconProps = {
   size?: number;
 };
 
-const IconCheck: React.FC<IconProps> = ({style, size = sizeConverter(34)}) => {
+const IconMultiply: React.FC<IconProps> = ({
+  style,
+  size = sizeConverter(34),
+}) => {
   const {selectedTheme} = useThemeStore();
   return (
     <Feather
       style={style}
-      name={'check'}
+      name={'x'}
       color={selectedTheme.textColor}
       size={size}
     />
   );
 };
 
-export default IconCheck;
+export default IconMultiply;
