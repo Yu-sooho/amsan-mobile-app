@@ -1,5 +1,13 @@
 import {LanguageProps} from '../types/LanguageTypes';
 
+import icon_apple from './logos/icon_apple.png';
+import icon_google from './logos/icon_google.png';
+
+export const images = {
+  icon_apple: icon_apple,
+  icon_google: icon_google,
+};
+
 const eng: LanguageProps = {
   id: 'eng',
   settingScreen: 'Setting',
@@ -40,9 +48,7 @@ const kor: LanguageProps = {
   ranking: '랭킹',
 };
 
-const language = {
+export const language = {
   kor,
   eng,
 };
-
-export default language;

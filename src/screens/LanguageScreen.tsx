@@ -3,7 +3,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {CheckButton, CustomHeader} from '../components';
 import {StyleSheet, View} from 'react-native';
 import {sizeConverter} from '../utils';
-import language from '../resources';
+import {language} from '../resources';
 import {useLanguageStore, useThemeStore} from '../stores';
 
 const LanguageScreen: React.FC = () => {

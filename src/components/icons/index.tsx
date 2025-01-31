@@ -9,3 +9,5 @@ export {default as IconMinus} from './IconMinus';
 export {default as IconMix} from './IconMix';
 export {default as IconUser} from './IconUser';
 export {default as IconCustom} from './IconCustom';
+export {default as IconGoogle} from './IconGoogle';
+export {default as IconApple} from './IconApple';
