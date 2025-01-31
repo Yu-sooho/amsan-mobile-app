@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "789977705445",
+    "project_id": "amsan-ec2ee",
+    "storage_bucket": "amsan-ec2ee.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:789977705445:android:2119deb984d5b603c35d0c",
+        "android_client_info": {
+          "package_name": "com.amsan"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAyoSKHX147A6gfiuoqjPxDNIf7Y0w59hs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
