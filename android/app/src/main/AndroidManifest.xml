@@ -10,6 +10,9 @@
       android:allowBackup="false"
       android:theme="@style/AppTheme"
       android:supportsRtl="true">
+        <meta-data
+            android:name="com.google.android.gms.auth.api.signin.v2.API_KEY"
+            android:value="789977705445-kp6sajh0cr8ijurbtfenjbeer3l7r4m9.apps.googleusercontent.com" />
       <activity
         android:name=".MainActivity"
         android:label="@string/app_name"

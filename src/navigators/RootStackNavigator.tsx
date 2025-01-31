@@ -1,7 +1,11 @@
 // In App.js in a new project
 
 import * as React from 'react';
-import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
+import {
+  createStackNavigator,
+  StackNavigationOptions,
+  TransitionPresets,
+} from '@react-navigation/stack';
 import {
   FontSizeScreen,
   LanguageScreen,
@@ -28,14 +32,21 @@ const RootStack = createStackNavigator<RootStackProps>({
 });
 
 const RootStackNavigator = () => {
+  const screenOptionsDefault: StackNavigationOptions = {
+    headerShown: false,
+    gestureEnabled: true,
+    ...TransitionPresets.SlideFromRightIOS,
+  };
+  const screenOptionsLeft: StackNavigationOptions = {
+    headerShown: false,
+    gestureEnabled: true,
+    ...TransitionPresets.SlideFromLeftIOS,
+  };
+
   return (
     <RootStack.Navigator
       initialRouteName='MainScreen'
-      screenOptions={() => ({
-        headerShown: false,
-        gestureEnabled: true,
-        ...TransitionPresets.SlideFromRightIOS,
-      })}>
+      screenOptions={() => screenOptionsDefault}>
       <RootStack.Screen name='MainScreen' component={MainScreen} />
 
       {/* 설정 화면들 */}
@@ -44,8 +55,16 @@ const RootStackNavigator = () => {
       <RootStack.Screen name='LanguageScreen' component={LanguageScreen} />
       <RootStack.Screen name='FontSizeScreen' component={FontSizeScreen} />
       <RootStack.Screen name='PlayScreen' component={PlayScreen} />
-      <RootStack.Screen name='MyInfoScreen' component={MyInfoScreen} />
-      <RootStack.Screen name='LoginScreen' component={LoginScreen} />
+      <RootStack.Screen
+        name='MyInfoScreen'
+        component={MyInfoScreen}
+        options={() => screenOptionsLeft}
+      />
+      <RootStack.Screen
+        name='LoginScreen'
+        component={LoginScreen}
+        options={() => screenOptionsLeft}
+      />
     </RootStack.Navigator>
   );
 };

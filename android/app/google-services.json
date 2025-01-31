@@ -12,7 +12,36 @@
           "package_name": "com.amsan"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "789977705445-4lji2di129unrqfao8g8sup7g1stnm1p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.amsan",
+            "certificate_hash": "cc282ccc3005e5ba833af90bae506d35b58b8771"
+          }
+        },
+        {
+          "client_id": "789977705445-de31dqkpuajj31vhte8ku0l0n3mp3d69.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.amsan",
+            "certificate_hash": "bca97fac0c136d4d40679372cc0c1c2032ae0820"
+          }
+        },
+        {
+          "client_id": "789977705445-l50hjnd0i33ell6e0jj7c91tvsm88o8c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.amsan",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "789977705445-kp6sajh0cr8ijurbtfenjbeer3l7r4m9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAyoSKHX147A6gfiuoqjPxDNIf7Y0w59hs"
@@ -20,7 +49,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "789977705445-kp6sajh0cr8ijurbtfenjbeer3l7r4m9.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "789977705445-2qb4mn8is8jibef6fahiddk1falipc7l.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.amsan"
+              }
+            }
+          ]
         }
       }
     }
