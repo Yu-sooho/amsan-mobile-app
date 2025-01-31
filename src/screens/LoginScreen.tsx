@@ -2,7 +2,7 @@ import React from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {CustomHeader, IconApple, IconGoogle} from '../components';
 import {Platform, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {useThemeStore} from '../stores';
+import {useLanguageStore, useThemeStore} from '../stores';
 import {
   appleAuthAndroid,
   appleAuth,
@@ -11,15 +11,15 @@ import 'react-native-get-random-values';
 import {v4 as uuid} from 'uuid';
 import {
   GoogleSignin,
-  isErrorWithCode,
   isSuccessResponse,
-  statusCodes,
 } from '@react-native-google-signin/google-signin';
-import {sizeConverter} from '../utils';
+import {showToast, sizeConverter} from '../utils';
 import themes from '../styles/themes';
+import auth from '@react-native-firebase/auth';
 
 const LoginScreen: React.FC = () => {
   const {selectedTheme} = useThemeStore();
+  const {selectedLanguage} = useLanguageStore();
 
   const styles = StyleSheet.create({
     button: {
@@ -40,24 +40,23 @@ const LoginScreen: React.FC = () => {
   const googleSignIn = async () => {
     try {
       await GoogleSignin.hasPlayServices();
-      const response = await GoogleSignin.signIn();
-      if (isSuccessResponse(response)) {
-        console.log(response, 'FUFU');
-      } else {
-        console.log(response, 'FUFU');
+      const signInResult = await GoogleSignin.signIn();
+      if (!isSuccessResponse(signInResult)) {
+        showToast({text: selectedLanguage.logintError});
+        return;
       }
+
+      const idToken = signInResult.data?.idToken;
+      if (!idToken) {
+        showToast({text: selectedLanguage.logintError});
+        return;
+      }
+
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+      await auth().signInWithCredential(googleCredential);
     } catch (error) {
-      if (isErrorWithCode(error)) {
-        switch (error.code) {
-          case statusCodes.IN_PROGRESS:
-            break;
-          case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
-            break;
-          default:
-        }
-      } else {
-        console.log(error);
-      }
+      console.log(`googleLogin error ${error}`);
+      showToast({text: selectedLanguage.logintError});
     }
   };
 
@@ -68,8 +67,9 @@ const LoginScreen: React.FC = () => {
         const state = uuid();
 
         appleAuthAndroid.configure({
-          clientId: 'com.example.client-android',
-          redirectUri: 'https://example.com/auth/callback',
+          clientId: 'com.amsan',
+          redirectUri:
+            'https://joyous-unexpected-enigmosaurus.glitch.me/callbacks/sign_in_with_apple',
           responseType: appleAuthAndroid.ResponseType.ALL,
           scope: appleAuthAndroid.Scope.ALL,
           nonce: rawNonce,
@@ -77,9 +77,20 @@ const LoginScreen: React.FC = () => {
         });
 
         const response = await appleAuthAndroid.signIn();
-        console.log(response);
+        const {id_token, nonce} = response;
+        if (!id_token) {
+          showToast({text: selectedLanguage.logintError});
+          return;
+        }
+
+        const appleCredential = auth.AppleAuthProvider.credential(
+          id_token,
+          nonce,
+        );
+        await auth().signInWithCredential(appleCredential);
       } catch (error) {
-        console.log(error, 'FUFU');
+        console.log(`appleLogin error ${error}`);
+        showToast({text: selectedLanguage.logintError});
       }
       return;
     }
@@ -89,17 +100,17 @@ const LoginScreen: React.FC = () => {
         requestedOperation: appleAuth.Operation.LOGIN,
         requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
       });
-      const credentialState = await appleAuth.getCredentialStateForUser(
-        appleAuthRequestResponse.user,
+
+      const {identityToken, nonce} = appleAuthRequestResponse;
+      const appleCredential = auth.AppleAuthProvider.credential(
+        identityToken,
+        nonce,
       );
-
-      console.log(appleAuthRequestResponse, 'FUFU');
-
-      if (credentialState === appleAuth.State.AUTHORIZED) {
-        // user is authenticated
-      }
+      await auth().signInWithCredential(appleCredential);
     } catch (error) {
-      console.log(error, 'FUFU');
+      console.log(`appleLogin error ${error}`);
+      showToast({text: selectedLanguage.logintError});
+      return;
     }
   };
 

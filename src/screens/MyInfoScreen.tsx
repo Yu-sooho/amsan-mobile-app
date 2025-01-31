@@ -1,13 +1,16 @@
 import React from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {ArrowButton, CustomHeader, UserImageButton} from '../components';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {sizeConverter} from '../utils';
-import {useLanguageStore, useThemeStore} from '../stores';
+import {useAuthStore, useLanguageStore, useThemeStore} from '../stores';
+import {useTextStyles} from '../styles';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
 const MyInfoScreen: React.FC = () => {
   const {selectedTheme} = useThemeStore();
   const {selectedLanguage} = useLanguageStore();
+  const {setToken, setIsLogin} = useAuthStore();
 
   const styles = StyleSheet.create({
     container: {
@@ -22,7 +25,24 @@ const MyInfoScreen: React.FC = () => {
     },
   });
 
+  const googleLogout = async () => {
+    try {
+      const result = await GoogleSignin.getCurrentUser();
+      if (result) await GoogleSignin.signOut();
+      return true;
+    } catch (error) {
+      console.log('googleLogout error', error);
+      return false;
+    }
+  };
+
   const onPressRanking = () => {};
+
+  const onPressLogout = async () => {
+    await googleLogout();
+    setToken(null);
+    setIsLogin(false);
+  };
 
   return (
     <SafeAreaView edges={['bottom']} style={styles.container}>
@@ -35,7 +55,31 @@ const MyInfoScreen: React.FC = () => {
         <UserImageButton />
       </View>
       <ArrowButton onPress={onPressRanking} text={selectedLanguage.ranking} />
+      <LogoutButton onPress={onPressLogout} />
     </SafeAreaView>
+  );
+};
+
+const LogoutButton: React.FC<{onPress: () => void}> = ({onPress}) => {
+  const {selectedTheme} = useThemeStore();
+  const {selectedLanguage} = useLanguageStore();
+  const {font14Bold} = useTextStyles();
+
+  const styles = StyleSheet.create({
+    container: {
+      backgroundColor: selectedTheme.backgourndColor,
+      marginTop: sizeConverter(24),
+      paddingLeft: sizeConverter(20),
+      width: sizeConverter(120),
+    },
+    text: {
+      ...font14Bold,
+    },
+  });
+  return (
+    <TouchableOpacity onPress={onPress} style={styles.container}>
+      <Text style={styles.text}>{selectedLanguage.logout}</Text>
+    </TouchableOpacity>
   );
 };
 

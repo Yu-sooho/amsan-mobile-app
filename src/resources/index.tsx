@@ -26,6 +26,8 @@ const eng: LanguageProps = {
   custom: 'custom',
   myInfo: 'My Info',
   ranking: 'ranking',
+  logout: 'Logout',
+  logintError: '로그인에 실패했습니다',
 };
 
 const kor: LanguageProps = {
@@ -46,6 +48,8 @@ const kor: LanguageProps = {
   custom: '커스텀',
   myInfo: '내 정보',
   ranking: '랭킹',
+  logout: '로그아웃',
+  logintError: '로그인에 실패했습니다',
 };
 
 export const language = {

@@ -6,7 +6,7 @@ import {language} from '../resources';
 
 interface LanguageState {
   selectedLanguage: LanguageProps;
-  selectLanguage: (theme: LanguageProps) => void;
+  selectLanguage: (language: LanguageProps) => void;
 }
 
 const useLanguageStore = create(

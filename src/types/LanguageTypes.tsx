@@ -5,7 +5,10 @@ export type LanguageTypes = {
 
 export type LanguageProps = {
   id: 'kor' | 'eng';
+  // screen
   settingScreen: string;
+
+  // components
   theme: string;
   language: string;
   fontSize: string;
@@ -21,4 +24,8 @@ export type LanguageProps = {
   custom: string;
   myInfo: string;
   ranking: string;
+  logout: string;
+
+  // Toast Message
+  logintError: string;
 };

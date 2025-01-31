@@ -6,6 +6,7 @@ interface AuthState {
   isLogin: boolean;
   setIsLogin: (value: boolean) => void;
   token: string | null | undefined;
+  setToken: (value: string | null | undefined) => void;
 }
 
 const useAuthStore = create(
@@ -14,6 +15,8 @@ const useAuthStore = create(
       isLogin: false,
       setIsLogin: (value: boolean) => set(() => ({isLogin: value})),
       token: null,
+      setToken: (value: string | null | undefined) =>
+        set(() => ({token: value})),
     }),
     {
       name: 'auth-storage',
