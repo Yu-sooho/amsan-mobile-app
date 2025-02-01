@@ -1,8 +1,8 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {CustomHeader, IconApple, IconGoogle} from '../components';
 import {Platform, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {useLanguageStore, useThemeStore} from '../stores';
+import {useAuthStore, useLanguageStore, useThemeStore} from '../stores';
 import {
   appleAuthAndroid,
   appleAuth,
@@ -16,10 +16,16 @@ import {
 import {showToast, sizeConverter} from '../utils';
 import themes from '../styles/themes';
 import auth from '@react-native-firebase/auth';
+import {useNavigation} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {RootStackProps} from '../types/NavigationTypes';
 
 const LoginScreen: React.FC = () => {
+  const navigation =
+    useNavigation<StackNavigationProp<RootStackProps, 'MainScreen'>>();
   const {selectedTheme} = useThemeStore();
   const {selectedLanguage} = useLanguageStore();
+  const {isLogin} = useAuthStore();
 
   const styles = StyleSheet.create({
     button: {
@@ -36,6 +42,12 @@ const LoginScreen: React.FC = () => {
       paddingTop: sizeConverter(240),
     },
   });
+
+  useEffect(() => {
+    if (isLogin) {
+      navigation.replace('MyInfoScreen');
+    }
+  }, [isLogin]);
 
   const googleSignIn = async () => {
     try {

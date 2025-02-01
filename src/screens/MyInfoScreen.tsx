@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {ArrowButton, CustomHeader, UserImageButton} from '../components';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
@@ -6,11 +6,17 @@ import {sizeConverter} from '../utils';
 import {useAuthStore, useLanguageStore, useThemeStore} from '../stores';
 import {useTextStyles} from '../styles';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {RootStackProps} from '../types/NavigationTypes';
+import {useNavigation} from '@react-navigation/native';
+import auth from '@react-native-firebase/auth';
 
 const MyInfoScreen: React.FC = () => {
+  const navigation =
+    useNavigation<StackNavigationProp<RootStackProps, 'MainScreen'>>();
   const {selectedTheme} = useThemeStore();
   const {selectedLanguage} = useLanguageStore();
-  const {setToken, setIsLogin} = useAuthStore();
+  const {setToken, setIsLogin, isLogin} = useAuthStore();
 
   const styles = StyleSheet.create({
     container: {
@@ -24,6 +30,12 @@ const MyInfoScreen: React.FC = () => {
       paddingVertical: sizeConverter(24),
     },
   });
+
+  useEffect(() => {
+    if (!isLogin) {
+      navigation.replace('LoginScreen');
+    }
+  }, [isLogin]);
 
   const googleLogout = async () => {
     try {
@@ -40,6 +52,7 @@ const MyInfoScreen: React.FC = () => {
 
   const onPressLogout = async () => {
     await googleLogout();
+    auth().signOut();
     setToken(null);
     setIsLogin(false);
   };
