@@ -10,7 +10,7 @@ import {sizeConverter} from './src/utils';
 
 function App(): React.JSX.Element {
   const {selectedTheme} = useThemeStore();
-  const {setIsLogin} = useAuthStore();
+  const {setIsLogin, setUser} = useAuthStore();
   const [initializing, setInitializing] = useState(true);
 
   const styles = StyleSheet.create({
@@ -35,6 +35,8 @@ function App(): React.JSX.Element {
   function onAuthStateChanged(user: FirebaseAuthTypes.User | null) {
     if (user) {
       setIsLogin(true);
+      setUser(user);
+      console.log('login user:', user);
     } else {
       setIsLogin(false);
     }

@@ -1,7 +1,13 @@
 import React, {useEffect} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {ArrowButton, CustomHeader, UserImageButton} from '../components';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {sizeConverter} from '../utils';
 import {useAuthStore, useLanguageStore, useThemeStore} from '../stores';
 import {useTextStyles} from '../styles';
@@ -16,7 +22,8 @@ const MyInfoScreen: React.FC = () => {
     useNavigation<StackNavigationProp<RootStackProps, 'MainScreen'>>();
   const {selectedTheme} = useThemeStore();
   const {selectedLanguage} = useLanguageStore();
-  const {setToken, setIsLogin, isLogin} = useAuthStore();
+  const {setToken, setIsLogin, isLogin, user, setUser} = useAuthStore();
+  const {font16Bold} = useTextStyles();
 
   const styles = StyleSheet.create({
     container: {
@@ -28,6 +35,15 @@ const MyInfoScreen: React.FC = () => {
       justifyContent: 'center',
       marginBottom: sizeConverter(12),
       paddingVertical: sizeConverter(24),
+    },
+    editButton: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: sizeConverter(220),
+    },
+    name: {
+      ...font16Bold,
+      marginTop: sizeConverter(10),
     },
   });
 
@@ -53,6 +69,7 @@ const MyInfoScreen: React.FC = () => {
   const onPressLogout = async () => {
     await googleLogout();
     auth().signOut();
+    setUser(null);
     setToken(null);
     setIsLogin(false);
   };
@@ -64,11 +81,19 @@ const MyInfoScreen: React.FC = () => {
         isHaveOption={false}
         title={selectedLanguage.myInfo}
       />
-      <View style={styles.content}>
-        <UserImageButton />
-      </View>
-      <ArrowButton onPress={onPressRanking} text={selectedLanguage.ranking} />
-      <LogoutButton onPress={onPressLogout} />
+      <ScrollView bounces={false}>
+        <View style={styles.content}>
+          <UserImageButton />
+          <TouchableOpacity style={styles.editButton}>
+            <Text style={styles.name}>{user?.displayName}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.editButton}>
+            <Text style={styles.name}>{user?.email}</Text>
+          </TouchableOpacity>
+        </View>
+        <ArrowButton onPress={onPressRanking} text={selectedLanguage.ranking} />
+        <LogoutButton onPress={onPressLogout} />
+      </ScrollView>
     </SafeAreaView>
   );
 };

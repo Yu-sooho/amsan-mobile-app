@@ -11,3 +11,6 @@ export {default as IconUser} from './IconUser';
 export {default as IconCustom} from './IconCustom';
 export {default as IconGoogle} from './IconGoogle';
 export {default as IconApple} from './IconApple';
+export {default as IconClose} from './IconClose';
+export {default as IconHistory} from './IconHistory';
+export {default as IconRanking} from './IconRanking';

@@ -1,17 +1,27 @@
+import {QuestionType} from './ComponentTypes';
+
 export type RootStackProps = {
   MainScreen: undefined;
   SettingScreen: undefined;
   ThemeScreen: undefined;
   LanguageScreen: undefined;
   FontSizeScreen: undefined;
-  PlayScreen: {type: PlayType};
+  PlayScreen: {operation: PlayType; level: number};
   MyInfoScreen: undefined;
   LoginScreen: undefined;
+  HistoryScreen: undefined;
+  RankingScreen: undefined;
+  ResultScreen: {
+    correctQuetions: QuestionType[];
+    wrongQuestions: QuestionType[];
+    operation: PlayType;
+    level: number;
+  };
 };
 
-type PlayType =
+export type PlayType =
   | 'plus'
-  | 'divide'
+  | 'division'
   | 'multiply'
   | 'mix'
   | 'subtraction'

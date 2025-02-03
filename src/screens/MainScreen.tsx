@@ -77,32 +77,38 @@ const MainScreen: React.FC = () => {
 
   const onPressPlus = () => {
     navigation.navigate('PlayScreen', {
-      type: 'plus',
+      operation: 'plus',
+      level: 1,
     });
   };
   const onPressMultiply = () => {
     navigation.navigate('PlayScreen', {
-      type: 'multiply',
+      operation: 'multiply',
+      level: 1,
     });
   };
   const onPressSubtraction = () => {
     navigation.navigate('PlayScreen', {
-      type: 'subtraction',
+      operation: 'subtraction',
+      level: 1,
     });
   };
   const onPressDivision = () => {
     navigation.navigate('PlayScreen', {
-      type: 'divide',
+      operation: 'division',
+      level: 1,
     });
   };
   const onPressMix = () => {
     navigation.navigate('PlayScreen', {
-      type: 'mix',
+      operation: 'mix',
+      level: 1,
     });
   };
   const onPressCustom = () => {
     navigation.navigate('PlayScreen', {
-      type: 'custom',
+      operation: 'custom',
+      level: 1,
     });
   };
 

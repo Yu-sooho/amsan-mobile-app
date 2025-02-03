@@ -8,11 +8,14 @@ import {
 } from '@react-navigation/stack';
 import {
   FontSizeScreen,
+  HistoryScreen,
   LanguageScreen,
   LoginScreen,
   MainScreen,
   MyInfoScreen,
   PlayScreen,
+  RankingScreen,
+  ResultScreen,
   SettingScreen,
   ThemeScreen,
 } from '../screens';
@@ -28,6 +31,9 @@ const RootStack = createStackNavigator<RootStackProps>({
     PlayScreen: PlayScreen,
     MyInfoScreen: MyInfoScreen,
     LoginScreen: LoginScreen,
+    ResultScreen: ResultScreen,
+    HistoryScreen: HistoryScreen,
+    RankingScreen: RankingScreen,
   },
 });
 
@@ -54,7 +60,15 @@ const RootStackNavigator = () => {
       <RootStack.Screen name='ThemeScreen' component={ThemeScreen} />
       <RootStack.Screen name='LanguageScreen' component={LanguageScreen} />
       <RootStack.Screen name='FontSizeScreen' component={FontSizeScreen} />
-      <RootStack.Screen name='PlayScreen' component={PlayScreen} />
+      <RootStack.Screen name='RankingScreen' component={RankingScreen} />
+      <RootStack.Screen name='HistoryScreen' component={HistoryScreen} />
+      <RootStack.Screen
+        name='PlayScreen'
+        component={PlayScreen}
+        options={{
+          gestureEnabled: false,
+        }}
+      />
       <RootStack.Screen
         name='MyInfoScreen'
         component={MyInfoScreen}
@@ -64,6 +78,13 @@ const RootStackNavigator = () => {
         name='LoginScreen'
         component={LoginScreen}
         options={() => screenOptionsLeft}
+      />
+      <RootStack.Screen
+        name='ResultScreen'
+        component={ResultScreen}
+        options={{
+          gestureEnabled: false,
+        }}
       />
     </RootStack.Navigator>
   );

@@ -25,6 +25,10 @@ export type LanguageProps = {
   myInfo: string;
   ranking: string;
   logout: string;
+  confirm: string;
+  result: string;
+  retry: string;
+  history: string;
 
   // Toast Message
   logintError: string;

@@ -21,6 +21,7 @@ type CustomHeaderProps = {
   leftContent?: () => JSX.Element;
   title?: string;
   rightContent?: () => JSX.Element;
+  backNavigationNumber?: number;
 };
 
 const CustomHeader: React.FC<CustomHeaderProps> = ({
@@ -29,6 +30,7 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
   title = '',
   isHaveOption = false,
   rightContent,
+  backNavigationNumber,
 }) => {
   const {top} = useSafeAreaInsets();
   const {selectedTheme} = useThemeStore();
@@ -44,7 +46,14 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
 
   return (
     <View style={styles.container}>
-      {leftContent ? leftContent() : <LeftContent isHaveBack={isHaveBack} />}
+      {leftContent ? (
+        leftContent()
+      ) : (
+        <LeftContent
+          isHaveBack={isHaveBack}
+          backNavigationNumber={backNavigationNumber}
+        />
+      )}
       <CenterContent title={title} />
       {rightContent ? (
         rightContent()
@@ -55,7 +64,10 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
   );
 };
 
-const LeftContent: React.FC<{isHaveBack: boolean}> = ({isHaveBack}) => {
+const LeftContent: React.FC<{
+  isHaveBack: boolean;
+  backNavigationNumber?: number;
+}> = ({isHaveBack, backNavigationNumber = 1}) => {
   const navigation =
     useNavigation<StackNavigationProp<RootStackProps, 'SettingScreen'>>();
   const styles = StyleSheet.create({
@@ -69,7 +81,8 @@ const LeftContent: React.FC<{isHaveBack: boolean}> = ({isHaveBack}) => {
   });
 
   const onPress = () => {
-    if (navigation.canGoBack()) navigation.goBack();
+    if (!isHaveBack) return;
+    if (navigation.canGoBack()) navigation.pop(backNavigationNumber);
   };
 
   return (
