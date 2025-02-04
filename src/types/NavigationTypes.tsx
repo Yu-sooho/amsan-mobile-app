@@ -12,8 +12,7 @@ export type RootStackProps = {
   HistoryScreen: undefined;
   RankingScreen: undefined;
   ResultScreen: {
-    correctQuetions: QuestionType[];
-    wrongQuestions: QuestionType[];
+    questionsList: QuestionType[];
     operation: PlayType;
     level: number;
   };

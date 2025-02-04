@@ -38,8 +38,7 @@ const PlayScreen: React.FC<PlayScreenProps> = ({navigation, route}) => {
   const [isWrong, setIsWrong] = useState(false);
 
   const questionInfoRef = useRef<QuestionType | null>(null);
-  const wrongQuestionsRef = useRef<QuestionType[]>([]);
-  const correctQuestionsRef = useRef<QuestionType[]>([]);
+  const questionsListRef = useRef<QuestionType[]>([]);
 
   const inputRef = useRef<TextInput | null>(null);
 
@@ -114,10 +113,10 @@ const PlayScreen: React.FC<PlayScreenProps> = ({navigation, route}) => {
 
   const onBlur = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
     console.log('onBlur Input', e);
-    const answer = `${questionInfoRef.current?.answer}`;
-    if (inputAnswer === answer) {
-      createNewQuestion();
-    }
+    // const answer = `${questionInfoRef.current?.answer}`;
+    // if (inputAnswer === answer) {
+    //   createNewQuestion();
+    // }
   };
 
   const onFocus = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
@@ -146,19 +145,33 @@ const PlayScreen: React.FC<PlayScreenProps> = ({navigation, route}) => {
       const wrongQuestion: QuestionType = {
         question: questionInfoRef.current.question,
         answer: parseFloat(inputAnswer),
+        isCorrect: false,
       };
-      wrongQuestionsRef.current.push(wrongQuestion);
+      const find = questionsListRef.current.findIndex(element => {
+        return (
+          element.question === wrongQuestion.question &&
+          element.answer === wrongQuestion.answer
+        );
+      });
+
+      if (find < 0) {
+        questionsListRef.current.push(wrongQuestion);
+      }
       return;
     }
-    correctQuestionsRef.current.push(questionInfoRef.current);
+
+    const correctQuestion: QuestionType = {
+      ...questionInfoRef.current,
+      isCorrect: true,
+    };
+    questionsListRef.current.push(correctQuestion);
     createNewQuestion();
     setInputAnswer('');
   };
 
   const endedTimer = () => {
     navigation.navigate('ResultScreen', {
-      correctQuetions: correctQuestionsRef.current,
-      wrongQuestions: wrongQuestionsRef.current,
+      questionsList: questionsListRef.current,
       operation,
       level,
     });

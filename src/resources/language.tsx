@@ -24,6 +24,9 @@ export const eng: LanguageProps = {
   result: 'Result',
   retry: 'Retry',
   history: 'history',
+
+  serverError: 'server error please retry',
+  noHistoryList: 'no History list',
 };
 
 export const kor: LanguageProps = {
@@ -50,4 +53,7 @@ export const kor: LanguageProps = {
   result: '결과',
   retry: '다시 시도',
   history: '기록',
+
+  serverError: '다시 시도 해주세요',
+  noHistoryList: '기록이 없습니다',
 };

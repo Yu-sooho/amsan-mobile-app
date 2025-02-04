@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {
   ConfirmButton,
@@ -6,7 +6,7 @@ import {
   IconHistory,
   IconRanking,
 } from '../components';
-import {useLanguageStore, useThemeStore} from '../stores';
+import {useDataStore, useLanguageStore, useThemeStore} from '../stores';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {StackNavigationProp, StackScreenProps} from '@react-navigation/stack';
 import {PlayType, RootStackProps} from '../types';
@@ -14,9 +14,7 @@ import {useTextStyles} from '../styles';
 import {sizeConverter} from '../utils';
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 
-const HistoryButton = () => {
-  const navigation =
-    useNavigation<StackNavigationProp<RootStackProps, 'ResultScreen'>>();
+const HistoryButton: React.FC<{onPress: () => void}> = ({onPress}) => {
   const styles = StyleSheet.create({
     container: {
       alignItems: 'center',
@@ -27,20 +25,14 @@ const HistoryButton = () => {
     },
   });
 
-  const onPressBack = () => {
-    navigation.navigate('HistoryScreen');
-  };
-
   return (
-    <TouchableOpacity onPress={onPressBack} style={styles.container}>
+    <TouchableOpacity onPress={onPress} style={styles.container}>
       <IconHistory size={sizeConverter(26)} />
     </TouchableOpacity>
   );
 };
 
-const RankingButton = () => {
-  const navigation =
-    useNavigation<StackNavigationProp<RootStackProps, 'ResultScreen'>>();
+const RankingButton: React.FC<{onPress: () => void}> = () => {
   const styles = StyleSheet.create({
     container: {
       alignItems: 'center',
@@ -51,9 +43,7 @@ const RankingButton = () => {
     },
   });
 
-  const onPress = () => {
-    navigation.navigate('RankingScreen');
-  };
+  const onPress = () => {};
 
   return (
     <TouchableOpacity onPress={onPress} style={styles.container}>
@@ -65,10 +55,17 @@ const RankingButton = () => {
 type ResultScreenProps = StackScreenProps<RootStackProps, 'ResultScreen'>;
 
 const ResultScreen: React.FC<ResultScreenProps> = () => {
+  const navigation =
+    useNavigation<StackNavigationProp<RootStackProps, 'ResultScreen'>>();
   const route = useRoute<RouteProp<RootStackProps, 'ResultScreen'>>();
-  const {correctQuetions, wrongQuestions, operation, level} = route.params;
+  const {questionsList, operation, level} = route.params;
   const {selectedTheme} = useThemeStore();
   const {selectedLanguage} = useLanguageStore();
+  const {updateHistory} = useDataStore();
+
+  const correctQuestions = questionsList.filter(q => q.isCorrect === true);
+  const wrongQuestions = questionsList.filter(q => q.isCorrect === false);
+
   const styles = StyleSheet.create({
     container: {
       backgroundColor: selectedTheme.backgourndColor,
@@ -76,7 +73,22 @@ const ResultScreen: React.FC<ResultScreenProps> = () => {
     },
   });
 
-  console.log(route.params);
+  const onPressRanking = () => {
+    navigation.navigate('RankingScreen');
+  };
+
+  const onPressHistory = () => {
+    navigation.navigate('HistoryScreen');
+  };
+
+  const update = async () => {
+    const result = await updateHistory(questionsList);
+    console.log(result);
+  };
+
+  useEffect(() => {
+    update();
+  }, []);
 
   return (
     <SafeAreaView edges={['bottom']} style={styles.container}>
@@ -85,11 +97,11 @@ const ResultScreen: React.FC<ResultScreenProps> = () => {
         isHaveBack={false}
         isHaveOption={false}
         title={selectedLanguage.result}
-        leftContent={HistoryButton}
-        rightContent={RankingButton}
+        leftContent={() => <HistoryButton onPress={onPressHistory} />}
+        rightContent={() => <RankingButton onPress={onPressRanking} />}
       />
       <Content
-        point={correctQuetions.length}
+        point={correctQuestions.length}
         wrongPoint={wrongQuestions.length}
       />
       <Buttons operation={operation} level={level} />

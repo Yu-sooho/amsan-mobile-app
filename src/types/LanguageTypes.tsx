@@ -32,4 +32,6 @@ export type LanguageProps = {
 
   // Toast Message
   logintError: string;
+  serverError: string;
+  noHistoryList: string;
 };

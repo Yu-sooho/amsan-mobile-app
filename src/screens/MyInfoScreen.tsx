@@ -26,6 +26,9 @@ const MyInfoScreen: React.FC = () => {
   const {font16Bold} = useTextStyles();
 
   const styles = StyleSheet.create({
+    button: {
+      marginBottom: sizeConverter(12),
+    },
     container: {
       backgroundColor: selectedTheme.backgourndColor,
       flex: 1,
@@ -64,7 +67,12 @@ const MyInfoScreen: React.FC = () => {
     }
   };
 
-  const onPressRanking = () => {};
+  const onPressRanking = () => {
+    navigation.navigate('RankingScreen');
+  };
+  const onPressHistory = () => {
+    navigation.navigate('HistoryScreen');
+  };
 
   const onPressLogout = async () => {
     await googleLogout();
@@ -91,7 +99,16 @@ const MyInfoScreen: React.FC = () => {
             <Text style={styles.name}>{user?.email}</Text>
           </TouchableOpacity>
         </View>
-        <ArrowButton onPress={onPressRanking} text={selectedLanguage.ranking} />
+        <ArrowButton
+          onPress={onPressHistory}
+          text={selectedLanguage.history}
+          style={styles.button}
+        />
+        <ArrowButton
+          onPress={onPressRanking}
+          text={selectedLanguage.ranking}
+          style={styles.button}
+        />
         <LogoutButton onPress={onPressLogout} />
       </ScrollView>
     </SafeAreaView>
