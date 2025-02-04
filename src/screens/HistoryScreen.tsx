@@ -62,17 +62,18 @@ const HistoryScreen: React.FC = () => {
   };
 
   const onRefresh = async () => {
-    isRefreshing.current = true;
     lastDoc.current = null;
     isEnded.current = false;
     setHistoryList([]);
-    await fetchData();
-    isRefreshing.current = false;
+    isRefreshing.current = true;
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (isRefreshing.current === true) {
+      isRefreshing.current = false;
+      fetchData();
+    }
+  }, [isRefreshing.current]);
 
   return (
     <View style={styles.container}>
@@ -82,7 +83,13 @@ const HistoryScreen: React.FC = () => {
         contentContainerStyle={styles.list}
         renderItem={({item, index}) => <RenderItem item={item} index={index} />}
         keyExtractor={item => `${item?.id}`}
-        ListEmptyComponent={() => <ListEmptyComponent />}
+        ListEmptyComponent={() => (
+          <ListEmptyComponent
+            isRefresh={isRefreshing.current}
+            isLoading={isLoading.current}
+            isEnded={isEnded.current}
+          />
+        )}
         refreshControl={
           <RefreshControl
             refreshing={isRefreshing.current}
@@ -91,6 +98,13 @@ const HistoryScreen: React.FC = () => {
             colors={[selectedTheme.textColor]}
           />
         }
+        ListFooterComponent={() => (
+          <ListFooterComponent
+            isRefresh={isRefreshing.current}
+            isLoading={isLoading.current}
+            isEnded={isEnded.current}
+          />
+        )}
         onEndReached={onEndReached}
         scrollEventThrottle={200}
       />
@@ -98,7 +112,15 @@ const HistoryScreen: React.FC = () => {
   );
 };
 
-const ListEmptyComponent = () => {
+const ListEmptyComponent = ({
+  isRefresh,
+  isLoading,
+  isEnded,
+}: {
+  isRefresh: boolean;
+  isLoading: boolean;
+  isEnded: boolean;
+}) => {
   const {selectedLanguage} = useLanguageStore();
   const {font20Bold} = useTextStyles();
   const styles = StyleSheet.create({
@@ -106,6 +128,40 @@ const ListEmptyComponent = () => {
       paddingTop: sizeConverter(120),
     },
   });
+
+  if (isRefresh || isLoading) return null;
+
+  if (!isEnded) return null;
+
+  return (
+    <View style={styles.container}>
+      <Text style={font20Bold}>{selectedLanguage.noHistoryList}</Text>
+    </View>
+  );
+};
+
+const ListFooterComponent = ({
+  isRefresh,
+  isLoading,
+  isEnded,
+}: {
+  isRefresh: boolean;
+  isLoading: boolean;
+  isEnded: boolean;
+}) => {
+  const {selectedLanguage} = useLanguageStore();
+  const {font20Bold} = useTextStyles();
+  const styles = StyleSheet.create({
+    container: {
+      paddingBottom: sizeConverter(80),
+      paddingTop: sizeConverter(40),
+    },
+  });
+
+  if (isLoading || isRefresh) return null;
+
+  if (isEnded) return null;
+
   return (
     <View style={styles.container}>
       <Text style={font20Bold}>{selectedLanguage.noHistoryList}</Text>
@@ -196,42 +252,78 @@ const RenderItem = ({item, index}: {item: HistoryProps; index: number}) => {
           </View>
         </View>
       </View>
-      {isOpen && (
-        <View style={styles.openContainer}>
-          {item.questionsList.map((element, index) => {
-            return (
-              <View
-                style={styles.inputView}
-                key={`${element.question}-${element.answer}`}>
-                <ScrollView
-                  contentContainerStyle={{width: sizeConverter(240)}}
-                  style={{flex: 1}}
-                  horizontal>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                    }}>
-                    <Text
-                      style={
-                        styles.text
-                      }>{`${index + 1}.  ${element.question}`}</Text>
-                    <Text style={styles.text}>{element.answer}</Text>
-                  </View>
-                </ScrollView>
-                <View style={{flex: 1, alignItems: 'flex-end'}}>
-                  {element.isCorrect ? (
-                    <Text style={styles.date}>{`✅`}</Text>
-                  ) : (
-                    <Text style={styles.date}>{`❌`}</Text>
-                  )}
-                </View>
-              </View>
-            );
-          })}
-        </View>
-      )}
+      {isOpen && <QuestionListDetail item={item} />}
     </TouchableOpacity>
+  );
+};
+
+const QuestionListDetail: React.FC<{item: HistoryProps}> = ({item}) => {
+  const {font16Bold} = useTextStyles();
+  const {selectedTheme} = useThemeStore();
+
+  const styles = StyleSheet.create({
+    date: {
+      ...font16Bold,
+    },
+    inputView: {
+      flexDirection: 'row',
+    },
+    openContainer: {
+      paddingHorizontal: sizeConverter(24),
+      width: sizeConverter(320),
+    },
+    text: {
+      ...font16Bold,
+      fontSize: sizeConverter(20),
+    },
+    textAllView: {
+      flex: 1,
+      flexDirection: 'row',
+    },
+    textQ: {
+      ...font16Bold,
+      fontSize: sizeConverter(20),
+      maxWidth: sizeConverter(150),
+    },
+    wrongText: {
+      ...font16Bold,
+      color: selectedTheme.wrongColor,
+      fontSize: sizeConverter(20),
+    },
+  });
+  return (
+    <View style={styles.openContainer}>
+      {item.questionsList.map((element, index) => {
+        return (
+          <View
+            style={styles.inputView}
+            key={`${element.question}-${element.answer}`}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                flex: 1,
+              }}>
+              <Text
+                numberOfLines={1}
+                style={
+                  styles.textQ
+                }>{`${index + 1}.  ${element.question}`}</Text>
+              <Text style={element.isCorrect ? styles.text : styles.wrongText}>
+                {element.answer}
+              </Text>
+            </View>
+            <View style={{flex: 0.35, alignItems: 'flex-end'}}>
+              {element.isCorrect ? (
+                <Text style={styles.date}>{`✅`}</Text>
+              ) : (
+                <Text style={styles.date}>{`❌`}</Text>
+              )}
+            </View>
+          </View>
+        );
+      })}
+    </View>
   );
 };
 

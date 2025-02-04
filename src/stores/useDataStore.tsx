@@ -77,6 +77,8 @@ const useDataStore = create<DataState>(() => ({
       const lastVisibleDoc =
         querySnapshot.docs[querySnapshot.docs.length - 1] || null;
 
+      console.log('getHistory', query);
+
       return {historyData, lastDoc: lastVisibleDoc};
     } catch (error) {
       console.error('Error fetching history:', error);
