@@ -1,12 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {
-  FlatList,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useDataStore, useLanguageStore, useThemeStore} from '../stores';
 import {CustomHeader} from '../components';
 import {HistoryProps} from '../types';
@@ -14,6 +7,8 @@ import {formatTimestamp, showToast, sizeConverter} from '../utils';
 import {useTextStyles} from '../styles';
 import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
 import {RefreshControl} from 'react-native-gesture-handler';
+import LottieView from 'lottie-react-native';
+import {lotties} from '../resources';
 
 const PAGE_SIZE = 20;
 
@@ -101,7 +96,6 @@ const HistoryScreen: React.FC = () => {
         ListFooterComponent={() => (
           <ListFooterComponent
             isRefresh={isRefreshing.current}
-            isLoading={isLoading.current}
             isEnded={isEnded.current}
           />
         )}
@@ -142,15 +136,11 @@ const ListEmptyComponent = ({
 
 const ListFooterComponent = ({
   isRefresh,
-  isLoading,
   isEnded,
 }: {
   isRefresh: boolean;
-  isLoading: boolean;
   isEnded: boolean;
 }) => {
-  const {selectedLanguage} = useLanguageStore();
-  const {font20Bold} = useTextStyles();
   const styles = StyleSheet.create({
     container: {
       paddingBottom: sizeConverter(80),
@@ -158,13 +148,18 @@ const ListFooterComponent = ({
     },
   });
 
-  if (isLoading || isRefresh) return null;
+  if (isRefresh) return null;
 
   if (isEnded) return null;
 
   return (
     <View style={styles.container}>
-      <Text style={font20Bold}>{selectedLanguage.noHistoryList}</Text>
+      <LottieView
+        source={lotties.lottie_loading_white}
+        style={{width: sizeConverter(64), height: sizeConverter(64)}}
+        autoPlay
+        loop
+      />
     </View>
   );
 };
