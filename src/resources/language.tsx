@@ -24,9 +24,11 @@ export const eng: LanguageProps = {
   result: 'Result',
   retry: 'Retry',
   history: 'history',
+  cancel: 'cancel',
 
   serverError: 'server error please retry',
   noHistoryList: 'no History list',
+  isLogout: '로그아웃 시,\n기록 및 랭킹을 남길 수 없게됩니다.',
 };
 
 export const kor: LanguageProps = {
@@ -53,7 +55,9 @@ export const kor: LanguageProps = {
   result: '결과',
   retry: '다시 시도',
   history: '기록',
+  cancel: '취소',
 
   serverError: '다시 시도 해주세요',
   noHistoryList: '기록이 없습니다',
+  isLogout: '기록 및 랭킹을 남길 수 없게됩니다.',
 };

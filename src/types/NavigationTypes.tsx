@@ -16,6 +16,12 @@ export type RootStackProps = {
     operation: PlayType;
     level: number;
   };
+  CustomPopupScreen: {
+    onPressOk: () => void;
+    title?: string;
+    description?: string;
+  };
+  CustomModalScreen: undefined;
 };
 
 export type PlayType =

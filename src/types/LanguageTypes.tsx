@@ -29,9 +29,13 @@ export type LanguageProps = {
   result: string;
   retry: string;
   history: string;
+  cancel: string;
 
   // Toast Message
   logintError: string;
   serverError: string;
   noHistoryList: string;
+
+  //Popup Message
+  isLogout: string;
 };

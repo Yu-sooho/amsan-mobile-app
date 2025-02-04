@@ -7,6 +7,8 @@ import {
   TransitionPresets,
 } from '@react-navigation/stack';
 import {
+  CustomModalScreen,
+  CustomPopupScreen,
   FontSizeScreen,
   HistoryScreen,
   LanguageScreen,
@@ -34,6 +36,8 @@ const RootStack = createStackNavigator<RootStackProps>({
     ResultScreen: ResultScreen,
     HistoryScreen: HistoryScreen,
     RankingScreen: RankingScreen,
+    CustomPopupScreen: CustomPopupScreen,
+    CustomModalScreen: CustomModalScreen,
   },
 });
 
@@ -60,6 +64,7 @@ const RootStackNavigator = () => {
       <RootStack.Screen name='ThemeScreen' component={ThemeScreen} />
       <RootStack.Screen name='LanguageScreen' component={LanguageScreen} />
       <RootStack.Screen name='FontSizeScreen' component={FontSizeScreen} />
+
       <RootStack.Screen name='RankingScreen' component={RankingScreen} />
       <RootStack.Screen name='HistoryScreen' component={HistoryScreen} />
       <RootStack.Screen
@@ -84,6 +89,25 @@ const RootStackNavigator = () => {
         component={ResultScreen}
         options={{
           gestureEnabled: false,
+        }}
+      />
+      <RootStack.Screen
+        name='CustomPopupScreen'
+        component={CustomPopupScreen}
+        options={{
+          presentation: 'transparentModal',
+          cardOverlayEnabled: true,
+          ...TransitionPresets.ModalFadeTransition,
+          gestureEnabled: false,
+        }}
+      />
+      <RootStack.Screen
+        name='CustomModalScreen'
+        component={CustomModalScreen}
+        options={{
+          presentation: 'transparentModal',
+          cardOverlayEnabled: true,
+          ...TransitionPresets.ModalSlideFromBottomIOS,
         }}
       />
     </RootStack.Navigator>

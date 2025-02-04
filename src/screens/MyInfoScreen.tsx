@@ -70,11 +70,20 @@ const MyInfoScreen: React.FC = () => {
   const onPressRanking = () => {
     navigation.navigate('RankingScreen');
   };
+
   const onPressHistory = () => {
     navigation.navigate('HistoryScreen');
   };
 
-  const onPressLogout = async () => {
+  const onPressLogout = () => {
+    navigation.navigate('CustomPopupScreen', {
+      onPressOk: logout,
+      title: selectedLanguage.logout,
+      description: selectedLanguage.isLogout,
+    });
+  };
+
+  const logout = async () => {
     await googleLogout();
     auth().signOut();
     setUser(null);

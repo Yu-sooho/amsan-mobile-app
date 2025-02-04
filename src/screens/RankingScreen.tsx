@@ -1,8 +1,11 @@
 import React from 'react';
-import {StyleSheet, Text} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useLanguageStore, useThemeStore} from '../stores';
 import {CustomHeader} from '../components';
+import {useNavigation} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {RootStackProps} from '../types';
 
 const RankingScreen: React.FC = () => {
   const {selectedTheme} = useThemeStore();
@@ -17,9 +20,26 @@ const RankingScreen: React.FC = () => {
 
   return (
     <SafeAreaView edges={['bottom']} style={styles.container}>
-      <CustomHeader title={selectedLanguage.ranking} />
+      <CustomHeader
+        title={selectedLanguage.ranking}
+        rightContent={RightContent}
+      />
       <Text>123</Text>
     </SafeAreaView>
+  );
+};
+
+const RightContent = () => {
+  const navigation =
+    useNavigation<StackNavigationProp<RootStackProps, 'RankingScreen'>>();
+
+  const onPress = () => {
+    navigation.navigate('CustomModalScreen');
+  };
+  return (
+    <TouchableOpacity onPress={onPress}>
+      <Text>123</Text>
+    </TouchableOpacity>
   );
 };
 
