@@ -1,27 +1,36 @@
-import React from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React, {useState} from 'react';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {sizeConverter} from '../../utils';
 import {useThemeStore} from '../../stores';
-import {useNavigation} from '@react-navigation/native';
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackProps} from '../../types';
+import {CheckButton} from '../../components';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const CustomModalScreen: React.FC = () => {
   const navigation =
-    useNavigation<StackNavigationProp<RootStackProps, 'CustomPopupScreen'>>();
+    useNavigation<StackNavigationProp<RootStackProps, 'CustomModalScreen'>>();
+  const route = useRoute<RouteProp<RootStackProps, 'CustomModalScreen'>>();
   const {selectedTheme} = useThemeStore();
+  const {bottom} = useSafeAreaInsets();
+  const {onPress, selectedValue, valueList} = route.params;
+  const [value, setValue] = useState(selectedValue);
 
   const styles = StyleSheet.create({
+    arrowButton: {
+      marginBottom: sizeConverter(8),
+    },
     container: {
+      flex: 1,
+      justifyContent: 'flex-end',
+    },
+    content: {
       backgroundColor: selectedTheme.backgourndColor,
-      elevation: 5,
-      marginTop: sizeConverter(240),
-      minHeight: sizeConverter(300),
-      shadowColor: selectedTheme.textColor,
-      shadowOffset: {width: 0, height: 0},
-      shadowOpacity: 0.4,
-      shadowRadius: 4,
-      width: sizeConverter(320),
+      borderTopLeftRadius: sizeConverter(24),
+      borderTopRightRadius: sizeConverter(24),
+      paddingBottom: bottom + sizeConverter(24),
+      paddingTop: sizeConverter(24),
     },
   });
 
@@ -32,17 +41,32 @@ const CustomModalScreen: React.FC = () => {
     }
   };
 
+  const onPressItem = (value: string) => {
+    setValue(value);
+    onPress(value);
+    onPressBack();
+  };
+
   return (
-    <View style={{flex: 1}}>
-      <TouchableOpacity
-        onPress={onPressBack}
-        activeOpacity={1}
-        style={{flex: 1}}>
-        <View style={styles.container}>
-          <Text>3212412</Text>
-        </View>
-      </TouchableOpacity>
-    </View>
+    <TouchableOpacity
+      activeOpacity={1}
+      onPress={onPressBack}
+      style={styles.container}>
+      <View style={styles.content}>
+        {valueList.map((element, index) => {
+          return (
+            <View key={`${element}-${index}`}>
+              <CheckButton
+                style={styles.arrowButton}
+                onPress={() => onPressItem(element)}
+                text={element}
+                isActive={element === value}
+              />
+            </View>
+          );
+        })}
+      </View>
+    </TouchableOpacity>
   );
 };
 

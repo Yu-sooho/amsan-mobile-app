@@ -21,7 +21,11 @@ export type RootStackProps = {
     title?: string;
     description?: string;
   };
-  CustomModalScreen: undefined;
+  CustomModalScreen: {
+    onPress: (value: string) => void;
+    selectedValue: string;
+    valueList: string[];
+  };
 };
 
 export type PlayType =

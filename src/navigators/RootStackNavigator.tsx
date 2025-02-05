@@ -107,7 +107,8 @@ const RootStackNavigator = () => {
         options={{
           presentation: 'transparentModal',
           cardOverlayEnabled: true,
-          ...TransitionPresets.ModalSlideFromBottomIOS,
+          ...TransitionPresets.ModalPresentationIOS,
+          gestureEnabled: false,
         }}
       />
     </RootStack.Navigator>

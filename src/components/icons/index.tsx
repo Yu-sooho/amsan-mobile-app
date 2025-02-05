@@ -14,3 +14,4 @@ export {default as IconApple} from './IconApple';
 export {default as IconClose} from './IconClose';
 export {default as IconHistory} from './IconHistory';
 export {default as IconRanking} from './IconRanking';
+export {default as IconSliders} from './IconSliders';
