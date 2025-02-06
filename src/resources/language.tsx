@@ -28,6 +28,8 @@ export const eng: LanguageProps = {
 
   serverError: 'server error please retry',
   noHistoryList: 'no History list',
+  noRankingList: 'no Ranking list',
+
   isLogout: '로그아웃 시,\n기록 및 랭킹을 남길 수 없게됩니다.',
 };
 
@@ -59,5 +61,7 @@ export const kor: LanguageProps = {
 
   serverError: '다시 시도 해주세요',
   noHistoryList: '기록이 없습니다',
+  noRankingList: '랭킹 정보가 없습니다',
+
   isLogout: '기록 및 랭킹을 남길 수 없게됩니다.',
 };

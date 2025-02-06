@@ -22,7 +22,16 @@ const MyInfoScreen: React.FC = () => {
     useNavigation<StackNavigationProp<RootStackProps, 'MainScreen'>>();
   const {selectedTheme} = useThemeStore();
   const {selectedLanguage} = useLanguageStore();
-  const {setToken, setIsLogin, isLogin, user, setUser} = useAuthStore();
+  const {
+    setToken,
+    setIsLogin,
+    isLogin,
+    loginData,
+    setLoginData,
+    getUser,
+    setUserInfo,
+    userInfo,
+  } = useAuthStore();
   const {font16Bold} = useTextStyles();
 
   const styles = StyleSheet.create({
@@ -50,9 +59,18 @@ const MyInfoScreen: React.FC = () => {
     },
   });
 
+  const fetchUserData = async () => {
+    if (!loginData) return;
+    const result = await getUser(loginData);
+    if (!result) return;
+    setUserInfo(result);
+  };
+
   useEffect(() => {
     if (!isLogin) {
       navigation.replace('LoginScreen');
+    } else {
+      fetchUserData();
     }
   }, [isLogin]);
 
@@ -86,9 +104,10 @@ const MyInfoScreen: React.FC = () => {
   const logout = async () => {
     await googleLogout();
     auth().signOut();
-    setUser(null);
+    setLoginData(null);
     setToken(null);
     setIsLogin(false);
+    setUserInfo(null);
   };
 
   return (
@@ -102,10 +121,10 @@ const MyInfoScreen: React.FC = () => {
         <View style={styles.content}>
           <UserImageButton />
           <TouchableOpacity style={styles.editButton}>
-            <Text style={styles.name}>{user?.displayName}</Text>
+            <Text style={styles.name}>{userInfo?.displayName}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.editButton}>
-            <Text style={styles.name}>{user?.email}</Text>
+            <Text style={styles.name}>{userInfo?.email}</Text>
           </TouchableOpacity>
         </View>
         <ArrowButton

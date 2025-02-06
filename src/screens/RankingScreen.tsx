@@ -1,54 +1,25 @@
-import React, {useState} from 'react';
-import {StyleSheet, Text, TouchableOpacity} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {
+  FlatList,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {useLanguageStore, useThemeStore} from '../stores';
+import {useDataStore, useLanguageStore, useThemeStore} from '../stores';
 import {CustomHeader, IconSliders} from '../components';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
-import {RootStackProps} from '../types';
-import {sizeConverter} from '../utils';
+import {HistoryProps, PlayType, RootStackProps} from '../types';
+import {formatTimestamp, showToast, sizeConverter} from '../utils';
+import {useTextStyles} from '../styles';
+import LottieView from 'lottie-react-native';
+import {lotties} from '../resources';
+import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
 
-const RankingScreen: React.FC = () => {
-  const {selectedTheme} = useThemeStore();
-  const {selectedLanguage} = useLanguageStore();
-  const styles = StyleSheet.create({
-    container: {
-      backgroundColor: selectedTheme.backgourndColor,
-      flex: 1,
-    },
-  });
-
-  const sortTypes = [
-    selectedLanguage.plus,
-    selectedLanguage.division,
-    selectedLanguage.multiply,
-    selectedLanguage.subtraction,
-    selectedLanguage.mix,
-  ];
-
-  const [selectedValue, setSelectedValue] = useState('');
-
-  const onPressSortType = (value: string) => {
-    setSelectedValue(value);
-  };
-
-  return (
-    <SafeAreaView edges={['bottom']} style={styles.container}>
-      <CustomHeader
-        title={selectedLanguage.ranking}
-        rightContent={() => (
-          <RightContent
-            sortTypes={sortTypes}
-            selectedValue={selectedValue}
-            onPressSortType={onPressSortType}
-          />
-        )}
-      />
-
-      <Text>123</Text>
-    </SafeAreaView>
-  );
-};
+const PAGE_SIZE = 20;
 
 const RightContent = ({
   onPressSortType,
@@ -86,4 +57,274 @@ const RightContent = ({
   );
 };
 
+const RankingScreen: React.FC = () => {
+  const {selectedTheme} = useThemeStore();
+  const {selectedLanguage} = useLanguageStore();
+  const {getRanking} = useDataStore();
+  const isLoading = useRef<boolean>(false);
+  const isEnded = useRef<boolean>(false);
+  const isRefreshing = useRef<boolean>(false);
+
+  const [rankingList, setRankingList] = useState<HistoryProps[]>([]);
+  const lastDoc = useRef<FirebaseFirestoreTypes.DocumentSnapshot | null>(null);
+
+  const styles = StyleSheet.create({
+    container: {
+      backgroundColor: selectedTheme.backgourndColor,
+      flex: 1,
+    },
+    list: {
+      alignItems: 'center',
+      paddingBottom: sizeConverter(76),
+      paddingTop: sizeConverter(24),
+    },
+  });
+
+  const sortTypes = [
+    selectedLanguage.plus,
+    selectedLanguage.division,
+    selectedLanguage.multiply,
+    selectedLanguage.subtraction,
+    selectedLanguage.mix,
+  ];
+
+  const [selectedValue, setSelectedValue] = useState(selectedLanguage.mix);
+
+  const onPressSortType = (value: string) => {
+    setSelectedValue(value);
+  };
+
+  const checkType = (): PlayType => {
+    if (selectedValue === sortTypes[0]) return 'plus';
+    if (selectedValue === sortTypes[1]) return 'division';
+    if (selectedValue === sortTypes[2]) return 'multiply';
+    if (selectedValue === sortTypes[3]) return 'subtraction';
+    if (selectedValue === sortTypes[4]) return 'mix';
+    return 'custom';
+  };
+
+  const fetchData = async () => {
+    if (isLoading.current || isEnded.current) return;
+    isLoading.current = true;
+    const data = await getRanking(checkType(), PAGE_SIZE, lastDoc.current);
+    if (!data) {
+      showToast({text: selectedLanguage.serverError});
+      isEnded.current = true;
+      return;
+    }
+    if (data?.rankingData.length < PAGE_SIZE) isEnded.current = true;
+    if (data.rankingData) {
+      setRankingList([...rankingList, ...data.rankingData]);
+    }
+    lastDoc.current = data.lastDoc;
+    isLoading.current = false;
+  };
+
+  const onEndReached = () => {
+    fetchData();
+  };
+
+  const onRefresh = async () => {
+    lastDoc.current = null;
+    isEnded.current = false;
+    setRankingList([]);
+    isRefreshing.current = true;
+  };
+
+  useEffect(() => {
+    if (isRefreshing.current === true) {
+      isRefreshing.current = false;
+      fetchData();
+    }
+  }, [isRefreshing.current]);
+
+  useEffect(() => {
+    onRefresh();
+  }, [selectedValue]);
+
+  return (
+    <SafeAreaView edges={['bottom']} style={styles.container}>
+      <CustomHeader
+        title={selectedLanguage.ranking}
+        rightContent={() => (
+          <RightContent
+            sortTypes={sortTypes}
+            selectedValue={selectedValue}
+            onPressSortType={onPressSortType}
+          />
+        )}
+      />
+
+      <FlatList
+        data={rankingList}
+        contentContainerStyle={styles.list}
+        renderItem={({item, index}) => <RenderItem item={item} index={index} />}
+        keyExtractor={item => `${item?.id}`}
+        ListEmptyComponent={() => (
+          <ListEmptyComponent
+            isRefresh={isRefreshing.current}
+            isLoading={isLoading.current}
+            isEnded={isEnded.current}
+          />
+        )}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing.current}
+            onRefresh={onRefresh}
+            tintColor={selectedTheme.textColor}
+            colors={[selectedTheme.textColor]}
+          />
+        }
+        ListFooterComponent={() => (
+          <ListFooterComponent
+            isRefresh={isRefreshing.current}
+            isEnded={isEnded.current}
+          />
+        )}
+        onEndReached={onEndReached}
+        scrollEventThrottle={200}
+      />
+    </SafeAreaView>
+  );
+};
+
+const RenderItem = ({item, index}: {item: HistoryProps; index: number}) => {
+  const {font16Bold} = useTextStyles();
+  const date = formatTimestamp(item.timestamp);
+
+  const correctQuestions = item.questionsList.filter(q => q.isCorrect === true);
+  const wrongQuestions = item.questionsList.filter(q => q.isCorrect === false);
+
+  const styles = StyleSheet.create({
+    checkView: {
+      alignItems: 'center',
+      flex: 1,
+      justifyContent: 'center',
+    },
+    container: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      height: sizeConverter(64),
+      justifyContent: 'center',
+      width: sizeConverter(320),
+    },
+    date: {
+      ...font16Bold,
+    },
+    dateView: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      flex: 1,
+      height: sizeConverter(44),
+    },
+    inputView: {
+      flexDirection: 'row',
+    },
+    openContainer: {
+      paddingHorizontal: sizeConverter(24),
+      width: sizeConverter(320),
+    },
+    text: {
+      ...font16Bold,
+      fontSize: sizeConverter(20),
+    },
+    textAllView: {
+      flex: 1,
+      flexDirection: 'row',
+    },
+    textView: {
+      flexDirection: 'row',
+      flex: 1,
+      justifyContent: 'space-between',
+    },
+  });
+
+  return (
+    <TouchableOpacity>
+      <View style={styles.container}>
+        <View style={styles.textView}>
+          <View style={styles.dateView}>
+            <Text
+              style={
+                styles.date
+              }>{`${index + 1}.  ${date?.year} ${date?.month} ${date?.day}  `}</Text>
+            <Text style={styles.date}>{`${date?.hours}:${date?.minutes}`}</Text>
+          </View>
+          <View style={styles.textAllView}>
+            <View style={styles.checkView}>
+              <Text style={styles.date}>
+                {`✅   `}
+                <Text style={styles.text}>{`${correctQuestions.length}`}</Text>
+              </Text>
+            </View>
+            <View style={styles.checkView}>
+              <Text style={styles.date}>
+                {`❌   `}
+                <Text style={styles.text}>{`${wrongQuestions.length}`}</Text>
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+};
+
+const ListEmptyComponent = ({
+  isRefresh,
+  isLoading,
+  isEnded,
+}: {
+  isRefresh: boolean;
+  isLoading: boolean;
+  isEnded: boolean;
+}) => {
+  const {selectedLanguage} = useLanguageStore();
+  const {font20Bold} = useTextStyles();
+  const styles = StyleSheet.create({
+    container: {
+      paddingTop: sizeConverter(120),
+    },
+  });
+
+  if (isRefresh || isLoading) return null;
+
+  if (!isEnded) return null;
+
+  return (
+    <View style={styles.container}>
+      <Text style={font20Bold}>{selectedLanguage.noRankingList}</Text>
+    </View>
+  );
+};
+
+const ListFooterComponent = ({
+  isRefresh,
+  isEnded,
+}: {
+  isRefresh: boolean;
+  isEnded: boolean;
+}) => {
+  const styles = StyleSheet.create({
+    container: {
+      paddingBottom: sizeConverter(80),
+      paddingTop: sizeConverter(40),
+    },
+  });
+
+  if (isRefresh) return null;
+
+  if (isEnded) return null;
+
+  return (
+    <View style={styles.container}>
+      <LottieView
+        source={lotties.lottie_loading_white}
+        style={{width: sizeConverter(64), height: sizeConverter(64)}}
+        autoPlay
+        loop
+      />
+    </View>
+  );
+};
 export default RankingScreen;

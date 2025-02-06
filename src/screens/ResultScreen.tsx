@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {
   ConfirmButton,
@@ -32,7 +32,7 @@ const HistoryButton: React.FC<{onPress: () => void}> = ({onPress}) => {
   );
 };
 
-const RankingButton: React.FC<{onPress: () => void}> = () => {
+const RankingButton: React.FC<{onPress: () => void}> = ({onPress}) => {
   const styles = StyleSheet.create({
     container: {
       alignItems: 'center',
@@ -42,8 +42,6 @@ const RankingButton: React.FC<{onPress: () => void}> = () => {
       width: sizeConverter(44),
     },
   });
-
-  const onPress = () => {};
 
   return (
     <TouchableOpacity onPress={onPress} style={styles.container}>
@@ -62,6 +60,7 @@ const ResultScreen: React.FC<ResultScreenProps> = () => {
   const {selectedTheme} = useThemeStore();
   const {selectedLanguage} = useLanguageStore();
   const {updateHistory} = useDataStore();
+  const isUpdated = useRef<boolean>(false);
 
   const correctQuestions = questionsList.filter(q => q.isCorrect === true);
   const wrongQuestions = questionsList.filter(q => q.isCorrect === false);
@@ -82,8 +81,11 @@ const ResultScreen: React.FC<ResultScreenProps> = () => {
   };
 
   const update = async () => {
-    const result = await updateHistory(questionsList);
-    console.log(result);
+    if (isUpdated.current) return;
+    const result = await updateHistory(questionsList, operation);
+    if (result) {
+      isUpdated.current = true;
+    }
   };
 
   useEffect(() => {

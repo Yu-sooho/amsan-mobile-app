@@ -35,6 +35,7 @@ export type LanguageProps = {
   logintError: string;
   serverError: string;
   noHistoryList: string;
+  noRankingList: string;
 
   //Popup Message
   isLogout: string;

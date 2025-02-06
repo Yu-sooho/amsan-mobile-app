@@ -10,7 +10,8 @@ import {sizeConverter} from './src/utils';
 
 function App(): React.JSX.Element {
   const {selectedTheme} = useThemeStore();
-  const {setIsLogin, setUser} = useAuthStore();
+  const {setIsLogin, setLoginData, postUser, getUser, setUserInfo} =
+    useAuthStore();
   const [initializing, setInitializing] = useState(true);
 
   const styles = StyleSheet.create({
@@ -32,16 +33,25 @@ function App(): React.JSX.Element {
     offlineAccess: true,
   });
 
-  function onAuthStateChanged(user: FirebaseAuthTypes.User | null) {
+  const fetchUserData = async (user: FirebaseAuthTypes.User) => {
+    if (!user) return;
+    const result = await getUser(user);
+    if (!result) return;
+    setUserInfo(result);
+  };
+
+  const onAuthStateChanged = async (user: FirebaseAuthTypes.User | null) => {
     if (user) {
       setIsLogin(true);
-      setUser(user);
+      setLoginData(user);
+      await postUser(user);
+      await fetchUserData(user);
       console.log('login user:', user);
     } else {
       setIsLogin(false);
     }
     if (initializing) setInitializing(false);
-  }
+  };
 
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
