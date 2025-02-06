@@ -110,6 +110,10 @@ const MyInfoScreen: React.FC = () => {
     setUserInfo(null);
   };
 
+  const onPressEdit = () => {
+    navigation.navigate('InfoEditScreen');
+  };
+
   return (
     <SafeAreaView edges={['bottom']} style={styles.container}>
       <CustomHeader
@@ -119,11 +123,11 @@ const MyInfoScreen: React.FC = () => {
       />
       <ScrollView bounces={false}>
         <View style={styles.content}>
-          <UserImageButton />
-          <TouchableOpacity style={styles.editButton}>
+          <UserImageButton onPress={onPressEdit} />
+          <TouchableOpacity onPress={onPressEdit} style={styles.editButton}>
             <Text style={styles.name}>{userInfo?.displayName}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.editButton}>
+          <TouchableOpacity onPress={onPressEdit} style={styles.editButton}>
             <Text style={styles.name}>{userInfo?.email}</Text>
           </TouchableOpacity>
         </View>

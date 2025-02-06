@@ -11,6 +11,7 @@ export type RootStackProps = {
   LoginScreen: undefined;
   HistoryScreen: undefined;
   RankingScreen: undefined;
+  InfoEditScreen: undefined;
   ResultScreen: {
     questionsList: QuestionType[];
     operation: PlayType;

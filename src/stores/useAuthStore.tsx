@@ -16,6 +16,8 @@ interface AuthState {
 
   userInfo: CurrentUser | null;
   setUserInfo: (user: CurrentUser | null) => void;
+
+  updateUser: (user: CurrentUser) => Promise<CurrentUser | false>;
   postUser: (user: FirebaseAuthTypes.User) => Promise<boolean>;
   getUser: (user: FirebaseAuthTypes.User) => Promise<CurrentUser | false>;
 }
@@ -67,6 +69,39 @@ const useAuthStore = create(
           console.error('가입 오류:', error);
         }
         return true;
+      },
+      updateUser: async (user: CurrentUser) => {
+        const query = firestore()
+          .collection('user')
+          .where('uid', '==', user.uid);
+        const isRegisted = await query.get();
+
+        if (!isRegisted.empty) {
+          const userDocRef = firestore()
+            .collection('user')
+            .doc(isRegisted.docs[0].id);
+          await userDocRef.update({
+            lastLogin: firestore.FieldValue.serverTimestamp(),
+            displayName: user.displayName,
+            email: user.email,
+            profileImageUrl: user?.profileImageUrl,
+          });
+
+          const userDoc = isRegisted.docs[0];
+          const userData = userDoc.data();
+
+          const currentUser: CurrentUser = {
+            uid: userData.uid,
+            displayName: userData.displayName,
+            email: userData.email,
+            createdAt: userData.createdAt,
+            profileImageUrl: userData?.profileImageUrl,
+            lastLogin: userData.lastLogin,
+          };
+
+          return currentUser;
+        }
+        return false;
       },
       getUser: async (user: FirebaseAuthTypes.User) => {
         try {

@@ -11,6 +11,7 @@ import {
   CustomPopupScreen,
   FontSizeScreen,
   HistoryScreen,
+  InfoEditScreen,
   LanguageScreen,
   LoginScreen,
   MainScreen,
@@ -36,6 +37,7 @@ const RootStack = createStackNavigator<RootStackProps>({
     ResultScreen: ResultScreen,
     HistoryScreen: HistoryScreen,
     RankingScreen: RankingScreen,
+    InfoEditScreen: InfoEditScreen,
     CustomPopupScreen: CustomPopupScreen,
     CustomModalScreen: CustomModalScreen,
   },
@@ -67,6 +69,8 @@ const RootStackNavigator = () => {
 
       <RootStack.Screen name='RankingScreen' component={RankingScreen} />
       <RootStack.Screen name='HistoryScreen' component={HistoryScreen} />
+      <RootStack.Screen name='InfoEditScreen' component={InfoEditScreen} />
+
       <RootStack.Screen
         name='PlayScreen'
         component={PlayScreen}

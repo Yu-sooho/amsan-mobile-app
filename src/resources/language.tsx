@@ -2,7 +2,10 @@ import {LanguageProps} from '../types/LanguageTypes';
 
 export const eng: LanguageProps = {
   id: 'eng',
+
   settingScreen: 'Setting',
+  infoEditScreen: '내 정보 수정',
+
   theme: 'Theme',
   language: 'Language',
   fontSize: 'Font size',
@@ -25,6 +28,8 @@ export const eng: LanguageProps = {
   retry: 'Retry',
   history: 'history',
   cancel: 'cancel',
+  email: 'email',
+  name: 'name',
 
   serverError: 'server error please retry',
   noHistoryList: 'no History list',
@@ -35,7 +40,10 @@ export const eng: LanguageProps = {
 
 export const kor: LanguageProps = {
   id: 'kor',
+
   settingScreen: '설정',
+  infoEditScreen: '내 정보 수정',
+
   theme: '테마',
   language: '언어',
   fontSize: '글자 크기',
@@ -58,6 +66,8 @@ export const kor: LanguageProps = {
   retry: '다시 시도',
   history: '기록',
   cancel: '취소',
+  email: 'Email',
+  name: '이름',
 
   serverError: '다시 시도 해주세요',
   noHistoryList: '기록이 없습니다',

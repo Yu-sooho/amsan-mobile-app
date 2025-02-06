@@ -7,6 +7,7 @@ export type LanguageProps = {
   id: 'kor' | 'eng';
   // screen
   settingScreen: string;
+  infoEditScreen: string;
 
   // components
   theme: string;
@@ -30,6 +31,8 @@ export type LanguageProps = {
   retry: string;
   history: string;
   cancel: string;
+  email: string;
+  name: string;
 
   // Toast Message
   logintError: string;

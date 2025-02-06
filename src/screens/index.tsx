@@ -9,5 +9,6 @@ export {default as LoginScreen} from './LoginScreen';
 export {default as ResultScreen} from './ResultScreen';
 export {default as RankingScreen} from './RankingScreen';
 export {default as HistoryScreen} from './HistoryScreen';
+export {default as InfoEditScreen} from './InfoEditScreen';
 
 export * from './modals';
