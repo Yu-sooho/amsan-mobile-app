@@ -2,14 +2,18 @@ import {NavigationContainer} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {RootStackNavigator} from './src';
-import {useAuthStore, useThemeStore} from './src/stores';
+import {useAppStateStore, useAuthStore, useThemeStore} from './src/stores';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import Toast, {ToastConfigParams} from 'react-native-toast-message';
 import {sizeConverter} from './src/utils';
+import {LoadingScreen} from './src/screens';
+import {useTextStyles} from './src/styles';
 
 function App(): React.JSX.Element {
   const {selectedTheme} = useThemeStore();
+  const {font14Bold} = useTextStyles();
+  const {isLoading} = useAppStateStore();
   const {setIsLogin, setLoginData, postUser, getUser, setUserInfo} =
     useAuthStore();
   const [initializing, setInitializing] = useState(true);
@@ -20,10 +24,23 @@ function App(): React.JSX.Element {
       flex: 1,
     },
     toast: {
+      alignItems: 'center',
       backgroundColor: selectedTheme.backgourndColor,
+      borderRadius: sizeConverter(8),
       color: selectedTheme.textColor,
-      height: sizeConverter(60),
-      width: sizeConverter(300),
+      elevation: 5,
+      justifyContent: 'center',
+      marginBottom: sizeConverter(24),
+      minWidth: sizeConverter(220),
+      paddingHorizontal: sizeConverter(24),
+      paddingVertical: sizeConverter(12),
+      shadowColor: selectedTheme.textColor,
+      shadowOffset: {width: 0, height: 0},
+      shadowOpacity: 0.4,
+      shadowRadius: 4,
+    },
+    toastText: {
+      ...font14Bold,
     },
   });
 
@@ -61,7 +78,7 @@ function App(): React.JSX.Element {
   const toastConfig = {
     customToast: ({props}: ToastConfigParams<{text: string}>) => (
       <View style={styles.toast}>
-        <Text>{props.text}</Text>
+        <Text style={styles.toastText}>{props.text}</Text>
       </View>
     ),
   };
@@ -75,6 +92,7 @@ function App(): React.JSX.Element {
           <RootStackNavigator />
         </NavigationContainer>
       </View>
+      {isLoading && <LoadingScreen />}
       <Toast config={toastConfig} />
     </>
   );

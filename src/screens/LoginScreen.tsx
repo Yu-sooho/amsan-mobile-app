@@ -2,7 +2,12 @@ import React, {useEffect} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {CustomHeader, IconApple, IconGoogle} from '../components';
 import {Platform, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {useAuthStore, useLanguageStore, useThemeStore} from '../stores';
+import {
+  useAppStateStore,
+  useAuthStore,
+  useLanguageStore,
+  useThemeStore,
+} from '../stores';
 import {
   appleAuthAndroid,
   appleAuth,
@@ -26,6 +31,7 @@ const LoginScreen: React.FC = () => {
   const {selectedTheme} = useThemeStore();
   const {selectedLanguage} = useLanguageStore();
   const {isLogin} = useAuthStore();
+  const {setIsLoading} = useAppStateStore();
 
   const styles = StyleSheet.create({
     button: {
@@ -50,6 +56,7 @@ const LoginScreen: React.FC = () => {
   }, [isLogin]);
 
   const googleSignIn = async () => {
+    setIsLoading(true);
     try {
       await GoogleSignin.hasPlayServices();
       const signInResult = await GoogleSignin.signIn();
@@ -66,13 +73,16 @@ const LoginScreen: React.FC = () => {
 
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
       await auth().signInWithCredential(googleCredential);
+      setIsLoading(false);
     } catch (error) {
       console.log(`googleLogin error ${error}`);
       showToast({text: selectedLanguage.logintError});
+      setIsLoading(false);
     }
   };
 
   const appleSignIn = async () => {
+    setIsLoading(true);
     if (Platform.OS === 'android') {
       try {
         const rawNonce = uuid();
@@ -92,6 +102,7 @@ const LoginScreen: React.FC = () => {
         const {id_token, nonce} = response;
         if (!id_token) {
           showToast({text: selectedLanguage.logintError});
+          setIsLoading(false);
           return;
         }
 
@@ -100,10 +111,13 @@ const LoginScreen: React.FC = () => {
           nonce,
         );
         await auth().signInWithCredential(appleCredential);
+        setIsLoading(false);
       } catch (error) {
         console.log(`appleLogin error ${error}`);
         showToast({text: selectedLanguage.logintError});
+        setIsLoading(false);
       }
+      setIsLoading(false);
       return;
     }
 
@@ -119,9 +133,11 @@ const LoginScreen: React.FC = () => {
         nonce,
       );
       await auth().signInWithCredential(appleCredential);
+      setIsLoading(false);
     } catch (error) {
       console.log(`appleLogin error ${error}`);
       showToast({text: selectedLanguage.logintError});
+      setIsLoading(false);
       return;
     }
   };

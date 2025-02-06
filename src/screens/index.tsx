@@ -11,4 +11,6 @@ export {default as RankingScreen} from './RankingScreen';
 export {default as HistoryScreen} from './HistoryScreen';
 export {default as InfoEditScreen} from './InfoEditScreen';
 
+export {default as LoadingScreen} from './LoadingScreen';
+
 export * from './modals';

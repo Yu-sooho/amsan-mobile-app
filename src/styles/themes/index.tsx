@@ -7,6 +7,7 @@ const darkTheme: ThemeProps = {
   textColor: colors.cffffff,
   placeholderColor: colors.cd4d4d4,
   wrongColor: colors.cea4653,
+  backgourndColorOpacity: colors.c24242480,
 };
 
 const lightTheme: ThemeProps = {
@@ -15,6 +16,7 @@ const lightTheme: ThemeProps = {
   textColor: colors.c242424,
   placeholderColor: colors.cd4d4d4,
   wrongColor: colors.cea4653,
+  backgourndColorOpacity: colors.c24242480,
 };
 
 const themes = {

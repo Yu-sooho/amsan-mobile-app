@@ -36,9 +36,9 @@ interface DataState {
 const useDataStore = create<DataState>(() => ({
   updateHistory: async (questionsList, operation) => {
     try {
-      const {user} = useAuthStore.getState();
+      const {loginData} = useAuthStore.getState();
 
-      if (!user) {
+      if (!loginData) {
         console.log('User is not logged in.');
         return false;
       }
@@ -49,7 +49,7 @@ const useDataStore = create<DataState>(() => ({
 
       await firestore().collection('history').doc().set(
         {
-          uid: user.uid,
+          uid: loginData.uid,
           questionsList,
           timestamp: firestore.FieldValue.serverTimestamp(),
           operation: operation,
@@ -58,7 +58,7 @@ const useDataStore = create<DataState>(() => ({
         {merge: true},
       );
 
-      console.log('History updated for user:', user.uid);
+      console.log('History updated for user:', loginData.uid);
       return true;
     } catch (error) {
       console.log('updateHistory error', error);
@@ -68,15 +68,15 @@ const useDataStore = create<DataState>(() => ({
 
   getHistory: async (pageSize = 20, lastDoc = null) => {
     try {
-      const {user} = useAuthStore.getState();
-      if (!user) {
+      const {loginData} = useAuthStore.getState();
+      if (!loginData) {
         console.log('User is not logged in.');
         return undefined;
       }
 
       let query = firestore()
         .collection('history')
-        .where('uid', '==', user.uid)
+        .where('uid', '==', loginData.uid)
         .orderBy('timestamp', 'desc')
         .limit(pageSize);
 
@@ -111,8 +111,8 @@ const useDataStore = create<DataState>(() => ({
 
   getRanking: async (operation, pageSize = 20, lastDoc = null) => {
     try {
-      const {user} = useAuthStore.getState();
-      if (!user) {
+      const {loginData} = useAuthStore.getState();
+      if (!loginData) {
         console.log('User is not logged in.');
         return undefined;
       }

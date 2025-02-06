@@ -4,7 +4,7 @@ import {PlayType} from './NavigationTypes';
 export type QuestionType = {
   question: string;
   answer: number;
-  isCorrect: boolean;
+  isCorrect?: boolean;
 };
 
 export type HistoryProps = {

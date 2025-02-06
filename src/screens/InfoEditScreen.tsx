@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import {
   Keyboard,
+  Linking,
+  Platform,
   StyleSheet,
   Text,
   TextInput,
@@ -8,7 +10,12 @@ import {
   View,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {useAuthStore, useLanguageStore, useThemeStore} from '../stores';
+import {
+  useAppStateStore,
+  useAuthStore,
+  useLanguageStore,
+  useThemeStore,
+} from '../stores';
 import {ConfirmButton, CustomHeader, UserImageButton} from '../components';
 import {showToast, sizeConverter} from '../utils';
 import {useTextStyles} from '../styles';
@@ -16,11 +23,19 @@ import {CurrentUser} from '../types/AuthTypes';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackProps} from '../types';
+import ImagePicker from 'react-native-image-crop-picker';
+import {check, PERMISSIONS, request} from 'react-native-permissions';
+
+const PHOTO_LIBRARY =
+  Platform.OS === 'android'
+    ? PERMISSIONS.ANDROID.READ_MEDIA_IMAGES
+    : PERMISSIONS.IOS.PHOTO_LIBRARY;
 
 const InfoEditScreen: React.FC = () => {
   const {selectedTheme} = useThemeStore();
   const {selectedLanguage} = useLanguageStore();
   const {userInfo, updateUser, setUserInfo} = useAuthStore();
+  const {setIsLoading} = useAppStateStore();
   const {font16Bold} = useTextStyles();
   const [inputName, setInputName] = useState('');
   const [inputEmail, setInputEmail] = useState('');
@@ -68,6 +83,7 @@ const InfoEditScreen: React.FC = () => {
 
   const onPressSave = async () => {
     if (!userInfo) return;
+    setIsLoading(true);
     const user: CurrentUser = {
       ...userInfo,
       displayName: inputName || userInfo.email,
@@ -76,10 +92,12 @@ const InfoEditScreen: React.FC = () => {
     const currentUser = await updateUser(user);
     if (!currentUser) {
       showToast({text: selectedLanguage.failedEdit});
+      setIsLoading(false);
       return;
     }
     showToast({text: selectedLanguage.successEdit});
     setUserInfo(currentUser);
+    setIsLoading(false);
     navigation.goBack();
   };
 
@@ -91,12 +109,47 @@ const InfoEditScreen: React.FC = () => {
     setInputEmail(text);
   };
 
+  const openImagePicker = async () => {
+    ImagePicker.openPicker({
+      width: sizeConverter(400),
+      height: sizeConverter(400),
+      cropping: true,
+    }).then(image => {
+      console.log(image);
+    });
+  };
+
+  const requestPermission = async () => {
+    const result = await request(PHOTO_LIBRARY);
+    if (result === 'granted') {
+      openImagePicker();
+      return;
+    }
+    if (result === 'blocked') {
+      Linking.openSettings();
+    }
+  };
+
+  const checkPermission = async () => {
+    const result = await check(PHOTO_LIBRARY);
+    if (result === 'granted') {
+      openImagePicker();
+      return;
+    }
+    requestPermission();
+  };
+
+  const onPressImageButton = async () => {
+    checkPermission();
+  };
+
   return (
     <TouchableWithoutFeedback onPress={onPressBackground}>
       <SafeAreaView edges={['bottom']} style={styles.container}>
         <CustomHeader title={selectedLanguage.infoEditScreen} />
         <View style={styles.content}>
           <UserImageButton
+            onPress={onPressImageButton}
             url={userInfo?.profileImageUrl}
             size={sizeConverter(160)}
           />

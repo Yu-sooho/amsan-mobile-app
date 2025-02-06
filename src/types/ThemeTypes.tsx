@@ -1,7 +1,8 @@
 export type ThemeProps = {
-  id: string;
+  id: 'dark' | 'light';
   backgourndColor: string;
   textColor: string;
   wrongColor: string;
   placeholderColor: string;
+  backgourndColorOpacity: string;
 };
