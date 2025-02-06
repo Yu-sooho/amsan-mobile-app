@@ -18,6 +18,7 @@ type ButtonProps = {
   contentContainerStyle?: StyleProp<ViewStyle>;
   style?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<TextStyle>;
+  disabled?: boolean;
 };
 
 const ConfirmButton: React.FC<ButtonProps> = ({
@@ -25,6 +26,7 @@ const ConfirmButton: React.FC<ButtonProps> = ({
   text,
   style,
   textStyle,
+  disabled,
   contentContainerStyle,
 }) => {
   const {font18Bold} = useTextStyles();
@@ -40,14 +42,19 @@ const ConfirmButton: React.FC<ButtonProps> = ({
     },
     text: {
       ...font18Bold,
-      color: selectedTheme.textColor,
+      color: disabled
+        ? selectedTheme.placeholderColor
+        : selectedTheme.textColor,
       fontSize: sizeConverter(24),
     },
   });
 
   return (
     <View style={contentContainerStyle}>
-      <TouchableOpacity style={[styles.container, style]} onPress={onPress}>
+      <TouchableOpacity
+        disabled={disabled}
+        style={[styles.container, style]}
+        onPress={onPress}>
         <Text style={[styles.text, textStyle]}>{text}</Text>
       </TouchableOpacity>
     </View>

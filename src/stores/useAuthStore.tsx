@@ -71,37 +71,46 @@ const useAuthStore = create(
         return true;
       },
       updateUser: async (user: CurrentUser) => {
-        const query = firestore()
-          .collection('user')
-          .where('uid', '==', user.uid);
-        const isRegisted = await query.get();
-
-        if (!isRegisted.empty) {
-          const userDocRef = firestore()
+        try {
+          const query = firestore()
             .collection('user')
-            .doc(isRegisted.docs[0].id);
-          await userDocRef.update({
-            lastLogin: firestore.FieldValue.serverTimestamp(),
-            displayName: user.displayName,
-            email: user.email,
-            profileImageUrl: user?.profileImageUrl,
-          });
+            .where('uid', '==', user.uid);
+          const isRegisted = await query.get();
 
-          const userDoc = isRegisted.docs[0];
-          const userData = userDoc.data();
+          const cleanUserData = Object.fromEntries(
+            Object.entries(user).filter(([, value]) => value !== undefined),
+          );
 
-          const currentUser: CurrentUser = {
-            uid: userData.uid,
-            displayName: userData.displayName,
-            email: userData.email,
-            createdAt: userData.createdAt,
-            profileImageUrl: userData?.profileImageUrl,
-            lastLogin: userData.lastLogin,
-          };
+          if (!isRegisted.empty) {
+            const userDocRef = firestore()
+              .collection('user')
+              .doc(isRegisted.docs[0].id);
+            await userDocRef.update({
+              ...cleanUserData,
+            });
 
-          return currentUser;
+            const gerUser = await query.get();
+            const userDoc = gerUser.docs[0];
+            const userData = userDoc.data();
+
+            const currentUser: CurrentUser = {
+              uid: userData.uid,
+              displayName: userData.displayName,
+              email: userData.email,
+              createdAt: userData.createdAt,
+              profileImageUrl: userData?.profileImageUrl,
+              lastLogin: userData.lastLogin,
+            };
+            console.log('updateUser success', currentUser);
+            return currentUser;
+          }
+          console.log('noUser');
+          return false;
+        } catch (error) {
+          console.log(user);
+          console.log('updateUser error', error);
+          return false;
         }
-        return false;
       },
       getUser: async (user: FirebaseAuthTypes.User) => {
         try {

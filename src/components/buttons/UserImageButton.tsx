@@ -57,7 +57,7 @@ const DefaultUserIcon: React.FC<{size?: number}> = ({size}) => {
     container: {
       alignItems: 'center',
       backgroundColor: selectedTheme.textColor,
-      borderRadius: sizeConverter(60),
+      borderRadius: size ? size / 2 : sizeConverter(60),
       borderWidth: sizeConverter(1),
       height: size || sizeConverter(120),
       justifyContent: 'center',
@@ -70,7 +70,10 @@ const DefaultUserIcon: React.FC<{size?: number}> = ({size}) => {
   });
   return (
     <View style={styles.container}>
-      <IconUser size={sizeConverter(60)} style={styles.image} />
+      <IconUser
+        size={size ? size / 2 : sizeConverter(60)}
+        style={styles.image}
+      />
     </View>
   );
 };
