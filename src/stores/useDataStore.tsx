@@ -4,12 +4,16 @@ import firestore, {
 } from '@react-native-firebase/firestore';
 import {HistoryProps, PlayType, QuestionType} from '../types';
 import useAuthStore from './useAuthStore';
+import storage from '@react-native-firebase/storage';
+import ImageResizer from '@bam.tech/react-native-image-resizer';
+import {Platform} from 'react-native';
 
 interface DataState {
   updateHistory: (
     questionsList: QuestionType[],
     operation: PlayType,
   ) => Promise<boolean>;
+  uploadImage: (pathToFile: string) => Promise<string[] | undefined>;
   getHistory: (
     pageSize?: number,
     lastDoc?: FirebaseFirestoreTypes.DocumentSnapshot | undefined | null,
@@ -65,7 +69,60 @@ const useDataStore = create<DataState>(() => ({
       return false;
     }
   },
+  uploadImage: async (pathToFile: string) => {
+    try {
+      const {loginData} = useAuthStore.getState();
+      if (!loginData) {
+        console.log('User is not logged in.');
+        return undefined;
+      }
+      const fileNames = [];
+      const fileExtension = pathToFile.split('.').pop() || '';
+      const re = await storage()
+        .ref(`profiles/${loginData.uid}.${fileExtension}`)
+        .putFile(pathToFile);
+      fileNames.push(
+        Platform.OS === 'android' ? re.metadata.fullPath : re.metadata.name,
+      );
+      const thumbnailSizes = [128, 256, 512];
+      for (const size of thumbnailSizes) {
+        const resizedImage = await ImageResizer.createResizedImage(
+          pathToFile,
+          size,
+          size,
+          'JPEG',
+          90,
+          0,
+          undefined,
+          false,
+          {mode: 'contain'},
+        );
 
+        const thumbnailPath = `profiles/${loginData.uid}_${size}.${fileExtension}`;
+        const reuslt = await storage()
+          .ref(thumbnailPath)
+          .putFile(resizedImage.uri);
+        fileNames.push(
+          Platform.OS === 'android'
+            ? reuslt.metadata.fullPath
+            : reuslt.metadata.name,
+        );
+      }
+
+      console.log('업로드 완료', fileNames);
+
+      const urls = [];
+      for (const name of fileNames) {
+        const url = await storage().ref(name).getDownloadURL();
+        urls.push(url);
+      }
+
+      return urls;
+    } catch (error) {
+      console.log(error);
+      return undefined;
+    }
+  },
   getHistory: async (pageSize = 20, lastDoc = null) => {
     try {
       const {loginData} = useAuthStore.getState();

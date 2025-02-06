@@ -13,6 +13,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {
   useAppStateStore,
   useAuthStore,
+  useDataStore,
   useLanguageStore,
   useThemeStore,
 } from '../stores';
@@ -36,9 +37,13 @@ const InfoEditScreen: React.FC = () => {
   const {selectedLanguage} = useLanguageStore();
   const {userInfo, updateUser, setUserInfo} = useAuthStore();
   const {setIsLoading} = useAppStateStore();
+  const {uploadImage} = useDataStore();
   const {font16Bold} = useTextStyles();
   const [inputName, setInputName] = useState('');
   const [inputEmail, setInputEmail] = useState('');
+  const [selectedImage, setSelecetedImage] = useState<
+    string | null | undefined
+  >(null);
   const navigation =
     useNavigation<StackNavigationProp<RootStackProps, 'InfoEditScreen'>>();
 
@@ -84,11 +89,28 @@ const InfoEditScreen: React.FC = () => {
   const onPressSave = async () => {
     if (!userInfo) return;
     setIsLoading(true);
+    let imageUrls = null;
     const user: CurrentUser = {
       ...userInfo,
-      displayName: inputName || userInfo.email,
+      displayName: inputName || userInfo.displayName,
       email: inputEmail || userInfo.email,
     };
+
+    if (selectedImage) {
+      imageUrls = await uploadImageData();
+      if (!imageUrls) {
+        showToast({text: selectedLanguage.failedEdit});
+        setIsLoading(false);
+        return false;
+      }
+    }
+    if (imageUrls) {
+      user.profileImageUrl = imageUrls[0];
+      user.profileImageUrl128 = imageUrls[1];
+      user.profileImageUrl256 = imageUrls[2];
+      user.profileImageUrl512 = imageUrls[3];
+    }
+
     const currentUser = await updateUser(user);
     if (!currentUser) {
       showToast({text: selectedLanguage.failedEdit});
@@ -109,13 +131,20 @@ const InfoEditScreen: React.FC = () => {
     setInputEmail(text);
   };
 
+  const uploadImageData = async () => {
+    if (!selectedImage) return;
+    const result = await uploadImage(selectedImage);
+    return result;
+  };
+
   const openImagePicker = async () => {
     ImagePicker.openPicker({
       width: sizeConverter(400),
       height: sizeConverter(400),
       cropping: true,
     }).then(image => {
-      console.log(image);
+      if (image?.sourceURL) setSelecetedImage(image.sourceURL);
+      if (image?.path) setSelecetedImage(image.path);
     });
   };
 
@@ -150,7 +179,11 @@ const InfoEditScreen: React.FC = () => {
         <View style={styles.content}>
           <UserImageButton
             onPress={onPressImageButton}
-            url={userInfo?.profileImageUrl}
+            url={
+              selectedImage ||
+              userInfo?.profileImageUrl512 ||
+              userInfo?.profileImageUrl
+            }
             size={sizeConverter(160)}
           />
           <View style={styles.textView}>
@@ -178,7 +211,9 @@ const InfoEditScreen: React.FC = () => {
           <ConfirmButton
             onPress={onPressSave}
             text={selectedLanguage.save}
-            disabled={inputEmail.length <= 0 && inputName.length <= 0}
+            disabled={
+              inputEmail.length <= 0 && inputName.length <= 0 && !selectedImage
+            }
           />
         </View>
       </SafeAreaView>

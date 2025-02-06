@@ -2,6 +2,7 @@ import {Dimensions} from 'react-native';
 import Toast, {ToastPosition, ToastType} from 'react-native-toast-message';
 import {PlayType, QuestionType} from '../types';
 import {Timestamp} from '@react-native-firebase/firestore';
+import {CurrentUser} from '../types/AuthTypes';
 
 const BASE_WIDTH = 375;
 const BASE_HEIGHT = 812;

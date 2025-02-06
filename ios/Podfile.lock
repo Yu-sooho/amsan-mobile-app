@@ -1504,6 +1504,7 @@ PODS:
     - React-RCTText (= 0.77.0)
     - React-RCTVibration (= 0.77.0)
   - React-callinvoker (0.77.0)
+  - React-Codegen (0.1.0)
   - React-Core (0.77.0):
     - glog
     - hermes-engine
@@ -2669,6 +2670,28 @@ PODS:
     - ReactCommon/turbomodule/core
   - react-native-get-random-values (1.11.0):
     - React-Core
+  - react-native-image-resizer (3.0.11):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.11.18.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - react-native-safe-area-context (5.1.0):
     - DoubleConversion
     - glog
@@ -3304,6 +3327,7 @@ DEPENDENCIES:
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
   - React-microtasksnativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)
   - react-native-get-random-values (from `../node_modules/react-native-get-random-values`)
+  - "react-native-image-resizer (from `../node_modules/@bam.tech/react-native-image-resizer`)"
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - "react-native-slider (from `../node_modules/@react-native-community/slider`)"
   - "react-native-vector-icons (from `../node_modules/@react-native-vector-icons/common`)"
@@ -3382,6 +3406,7 @@ SPEC REPOS:
     - lottie-ios
     - nanopb
     - PromisesObjC
+    - React-Codegen
     - RecaptchaInterop
     - SDWebImage
     - SDWebImageWebPCoder
@@ -3466,6 +3491,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/react/nativemodule/microtasks"
   react-native-get-random-values:
     :path: "../node_modules/react-native-get-random-values"
+  react-native-image-resizer:
+    :path: "../node_modules/@bam.tech/react-native-image-resizer"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-slider:
@@ -3602,6 +3629,7 @@ SPEC CHECKSUMS:
   RCTTypeSafety: 50d6ec72a3d13cf77e041ff43a0617050fb98e3f
   React: e46fdbd82d2de942970c106677056f3bdd438d82
   React-callinvoker: b027ad895934b5f27ce166d095ed0d272d7df619
+  React-Codegen: 4b8b4817cea7a54b83851d4c1f91f79aa73de30a
   React-Core: 36b7f20f655d47a35046e2b02c9aa5a8f1bcb61e
   React-CoreModules: 7fac6030d37165c251a7bd4bde3333212544da3c
   React-cxxreact: 0ead442ecaa248e7f71719e286510676495ae26d
@@ -3626,6 +3654,7 @@ SPEC CHECKSUMS:
   React-Mapbuffer: 257e617e7554c0ec448d13d38b13ee3cbdd3c5eb
   React-microtasksnativemodule: fa9db75d61e2053274057767ced1a2e2c485b0fa
   react-native-get-random-values: 21325b2244dfa6b58878f51f9aa42821e7ba3d06
+  react-native-image-resizer: 18489f01e664291a91deb90fb15ef6da39663ef8
   react-native-safe-area-context: fc459d62fa26be4d3e304ee713251b7f57cdc9a7
   react-native-slider: 07ae35a2287ee98993c284f7bcd87ed949a89392
   react-native-vector-icons: 1a1d163aff5e000ccfd0481bbf2c7120e42aa6b2

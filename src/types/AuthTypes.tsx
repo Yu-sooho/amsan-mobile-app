@@ -7,4 +7,7 @@ export type CurrentUser = {
   lastLogin: Timestamp;
   uid: string;
   profileImageUrl?: string;
+  profileImageUrl128?: string;
+  profileImageUrl256?: string;
+  profileImageUrl512?: string;
 };

@@ -15,10 +15,10 @@ const useAppStateStore = create<AppState>()(
     {
       name: 'appState-storage',
       storage: createJSONStorage(() => AsyncStorage),
-      //   partialize: state =>
-      //     ({
-      //       //   selectedLanguage: state.selectedLanguage,
-      //     }) as Partial<AppState>,
+      partialize: state =>
+        ({
+          isLoading: state.isLoading,
+        }) as Partial<AppState>,
     },
   ),
 );

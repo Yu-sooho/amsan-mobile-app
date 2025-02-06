@@ -123,7 +123,10 @@ const MyInfoScreen: React.FC = () => {
       />
       <ScrollView bounces={false}>
         <View style={styles.content}>
-          <UserImageButton onPress={onPressEdit} />
+          <UserImageButton
+            onPress={onPressEdit}
+            url={userInfo?.profileImageUrl256 || userInfo?.profileImageUrl}
+          />
           <TouchableOpacity onPress={onPressEdit} style={styles.editButton}>
             <Text style={styles.name}>{userInfo?.displayName}</Text>
           </TouchableOpacity>

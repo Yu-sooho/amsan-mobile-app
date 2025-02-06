@@ -98,8 +98,8 @@ const useAuthStore = create(
               displayName: userData.displayName,
               email: userData.email,
               createdAt: userData.createdAt,
-              profileImageUrl: userData?.profileImageUrl,
               lastLogin: userData.lastLogin,
+              ...userData,
             };
             console.log('updateUser success', currentUser);
             return currentUser;
@@ -107,8 +107,7 @@ const useAuthStore = create(
           console.log('noUser');
           return false;
         } catch (error) {
-          console.log(user);
-          console.log('updateUser error', error);
+          console.log('updateUser error', user, error);
           return false;
         }
       },
@@ -133,6 +132,7 @@ const useAuthStore = create(
             email: userData.email,
             createdAt: userData.createdAt,
             lastLogin: userData.lastLogin,
+            ...userData,
           };
 
           return currentUser;

@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  ImageStyle,
   StyleProp,
   StyleSheet,
   TouchableOpacity,
@@ -13,20 +12,19 @@ import {IconUser} from '../icons';
 import {useThemeStore} from '../../stores';
 
 type ImageProps = {
-  url?: string;
-  style?: StyleProp<ImageStyle>;
+  url?: string | null;
   containerStyle?: StyleProp<ViewStyle>;
   size?: number;
   onPress?: () => void;
 };
 
 const UserImageButton: React.FC<ImageProps> = ({
-  style,
   size,
   containerStyle,
   url,
   onPress,
 }) => {
+  const {selectedTheme} = useThemeStore();
   const styles = StyleSheet.create({
     container: {
       alignItems: 'center',
@@ -35,7 +33,17 @@ const UserImageButton: React.FC<ImageProps> = ({
       paddingHorizontal: sizeConverter(20),
       width: size || sizeConverter(120),
     },
-    image: {},
+    image: {
+      alignItems: 'center',
+      backgroundColor: selectedTheme.textColor,
+      borderColor: selectedTheme.textColor,
+      borderRadius: size ? size / 2 : sizeConverter(60),
+      borderWidth: sizeConverter(1),
+      height: size || sizeConverter(120),
+      justifyContent: 'center',
+      paddingHorizontal: sizeConverter(20),
+      width: size || sizeConverter(120),
+    },
   });
 
   return (
@@ -43,7 +51,7 @@ const UserImageButton: React.FC<ImageProps> = ({
       onPress={onPress}
       style={[styles.container, containerStyle]}>
       {url ? (
-        <FastImage style={[styles.image, style]} />
+        <FastImage source={{uri: url}} style={styles.image} />
       ) : (
         <DefaultUserIcon size={size} />
       )}
