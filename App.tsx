@@ -9,6 +9,9 @@ import Toast, {ToastConfigParams} from 'react-native-toast-message';
 import {sizeConverter} from './src/utils';
 import {LoadingScreen} from './src/screens';
 import {useTextStyles} from './src/styles';
+import mobileAds from 'react-native-google-mobile-ads';
+import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
+import {BannerAds} from './src/components';
 
 function App(): React.JSX.Element {
   const {selectedTheme} = useThemeStore();
@@ -44,6 +47,16 @@ function App(): React.JSX.Element {
     },
   });
 
+  const transparencyCheck = async () => {
+    const result = await check(PERMISSIONS.IOS.APP_TRACKING_TRANSPARENCY);
+    if (result === RESULTS.DENIED) {
+      await request(PERMISSIONS.IOS.APP_TRACKING_TRANSPARENCY);
+    }
+
+    const adapterStatuses = await mobileAds().initialize();
+    console.log('ads init', adapterStatuses);
+  };
+
   GoogleSignin.configure({
     webClientId:
       '789977705445-kp6sajh0cr8ijurbtfenjbeer3l7r4m9.apps.googleusercontent.com',
@@ -72,6 +85,7 @@ function App(): React.JSX.Element {
 
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    transparencyCheck();
     return subscriber; // unsubscribe on unmount
   }, []);
 
@@ -92,6 +106,7 @@ function App(): React.JSX.Element {
           <RootStackNavigator />
         </NavigationContainer>
       </View>
+      <BannerAds />
       {isLoading && <LoadingScreen />}
       <Toast config={toastConfig} />
     </>

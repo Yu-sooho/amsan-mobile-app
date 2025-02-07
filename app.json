@@ -1,4 +1,9 @@
 {
   "name": "amsan",
-  "displayName": "amsan"
+  "displayName": "amsan",
+  "react-native-google-mobile-ads": {
+    "android_app_id": "ca-app-pub-6937581814544685~3994092071",
+    "ios_app_id": "ca-app-pub-6937581814544685~5307173744",
+    "user_tracking_usage_description": "This identifier will be used to deliver personalized ads to you."
+  }
 }
