@@ -21,7 +21,7 @@ import {useTextStyles} from '../styles';
 import {createQuestion, sizeConverter} from '../utils';
 import {LanguageProps, QuestionType} from '../types';
 
-const TIMER = 10;
+const TIMER = 4;
 
 type PlayScreenProps = StackScreenProps<RootStackProps, 'PlayScreen'>;
 

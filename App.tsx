@@ -1,5 +1,5 @@
 import {NavigationContainer} from '@react-navigation/native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {RootStackNavigator} from './src';
 import {useAppStateStore, useAuthStore, useThemeStore} from './src/stores';
@@ -11,7 +11,7 @@ import {LoadingScreen} from './src/screens';
 import {useTextStyles} from './src/styles';
 import mobileAds from 'react-native-google-mobile-ads';
 import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
-import {BannerAds} from './src/components';
+import {BannerAds, InterstitialAds} from './src/components';
 
 function App(): React.JSX.Element {
   const {selectedTheme} = useThemeStore();
@@ -20,6 +20,7 @@ function App(): React.JSX.Element {
   const {setIsLogin, setLoginData, postUser, getUser, setUserInfo} =
     useAuthStore();
   const [initializing, setInitializing] = useState(true);
+  const hasRun = useRef<boolean>(false);
 
   const styles = StyleSheet.create({
     container: {
@@ -71,22 +72,28 @@ function App(): React.JSX.Element {
   };
 
   const onAuthStateChanged = async (user: FirebaseAuthTypes.User | null) => {
+    if (!user) {
+      setIsLogin(false);
+    }
+    if (hasRun.current) return;
+    if (initializing) setInitializing(false);
+    hasRun.current = true;
     if (user) {
       setIsLogin(true);
       setLoginData(user);
       await postUser(user);
       await fetchUserData(user);
       console.log('login user:', user);
-    } else {
-      setIsLogin(false);
     }
-    if (initializing) setInitializing(false);
   };
 
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     transparencyCheck();
-    return subscriber; // unsubscribe on unmount
+
+    return () => {
+      subscriber();
+    };
   }, []);
 
   const toastConfig = {
@@ -97,7 +104,11 @@ function App(): React.JSX.Element {
     ),
   };
 
-  // if (initializing) return <View style={{backgroundColor: 'red', flex: 1}} />;
+  if (initializing) {
+    return (
+      <View style={{backgroundColor: selectedTheme.backgourndColor, flex: 1}} />
+    );
+  }
 
   return (
     <>
@@ -107,6 +118,7 @@ function App(): React.JSX.Element {
         </NavigationContainer>
       </View>
       <BannerAds />
+      <InterstitialAds />
       {isLoading && <LoadingScreen />}
       <Toast config={toastConfig} />
     </>

@@ -6,7 +6,12 @@ import {
   IconHistory,
   IconRanking,
 } from '../components';
-import {useDataStore, useLanguageStore, useThemeStore} from '../stores';
+import {
+  useAppStateStore,
+  useDataStore,
+  useLanguageStore,
+  useThemeStore,
+} from '../stores';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {StackNavigationProp, StackScreenProps} from '@react-navigation/stack';
 import {PlayType, RootStackProps} from '../types';
@@ -60,6 +65,7 @@ const ResultScreen: React.FC<ResultScreenProps> = () => {
   const {selectedTheme} = useThemeStore();
   const {selectedLanguage} = useLanguageStore();
   const {updateHistory} = useDataStore();
+  const {playCount, setPlayCount} = useAppStateStore();
   const isUpdated = useRef<boolean>(false);
 
   const correctQuestions = questionsList.filter(q => q.isCorrect === true);
@@ -83,6 +89,7 @@ const ResultScreen: React.FC<ResultScreenProps> = () => {
   const update = async () => {
     if (isUpdated.current) return;
     const result = await updateHistory(questionsList, operation);
+    setPlayCount(playCount + 1);
     if (result) {
       isUpdated.current = true;
     }
