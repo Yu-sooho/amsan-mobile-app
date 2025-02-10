@@ -13,7 +13,7 @@ const useAppStateStore = create<AppState>()(
     set => ({
       isLoading: false,
       setIsLoading: value => set(() => ({isLoading: value})),
-      playCount: 0,
+      playCount: 5,
       setPlayCount: value => set(() => ({playCount: value})),
     }),
     {

@@ -36,6 +36,7 @@ const PlayScreen: React.FC<PlayScreenProps> = ({navigation, route}) => {
   const [time, setTime] = useState(3);
   const [inputAnswer, setInputAnswer] = useState('');
   const [isWrong, setIsWrong] = useState(false);
+  const [isEnded, setIsEnded] = useState(false);
 
   const questionInfoRef = useRef<QuestionType | null>(null);
   const questionsListRef = useRef<QuestionType[]>([]);
@@ -138,7 +139,7 @@ const PlayScreen: React.FC<PlayScreenProps> = ({navigation, route}) => {
   }, []);
 
   const onPressConfirm = () => {
-    if (!questionInfoRef.current) return;
+    if (!questionInfoRef.current || isEnded) return;
     const answer = `${questionInfoRef.current.answer}`;
     if (inputAnswer !== answer) {
       setIsWrong(true);
@@ -170,6 +171,7 @@ const PlayScreen: React.FC<PlayScreenProps> = ({navigation, route}) => {
   };
 
   const endedTimer = () => {
+    setIsEnded(true);
     navigation.navigate('ResultScreen', {
       questionsList: questionsListRef.current,
       operation,

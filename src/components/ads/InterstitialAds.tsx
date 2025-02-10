@@ -42,8 +42,8 @@ const InterstitialAds: React.FC = () => {
         if (Platform.OS === 'ios') {
           StatusBar.setHidden(false);
         }
+        setPlayCount(5);
         setLoaded(false);
-        setPlayCount(playCount + 1);
       },
     );
 
@@ -61,7 +61,8 @@ const InterstitialAds: React.FC = () => {
   }, [loaded]);
 
   useEffect(() => {
-    if (playCount !== 0 && playCount % 3 === 0) {
+    console.log(`광고까지 ${playCount} 게임 전`);
+    if (playCount <= 0) {
       interstitial.load();
     }
   }, [playCount]);

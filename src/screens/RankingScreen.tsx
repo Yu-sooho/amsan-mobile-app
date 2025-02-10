@@ -10,7 +10,7 @@ import {
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useDataStore, useLanguageStore, useThemeStore} from '../stores';
 import {CustomHeader, IconSliders, UserImageButton} from '../components';
-import {useNavigation} from '@react-navigation/native';
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {HistoryProps, PlayType, RootStackProps} from '../types';
 import {showToast, sizeConverter} from '../utils';
@@ -32,6 +32,7 @@ const RightContent = ({
 }) => {
   const navigation =
     useNavigation<StackNavigationProp<RootStackProps, 'RankingScreen'>>();
+
   const styles = StyleSheet.create({
     container: {
       alignItems: 'center',
@@ -64,6 +65,9 @@ const RankingScreen: React.FC = () => {
   const isLoading = useRef<boolean>(false);
   const isEnded = useRef<boolean>(false);
   const isRefreshing = useRef<boolean>(false);
+  const route = useRoute<RouteProp<RootStackProps, 'RankingScreen'>>();
+
+  const operation = route?.params?.operation;
 
   const [rankingList, setRankingList] = useState<HistoryProps[]>([]);
   const lastDoc = useRef<FirebaseFirestoreTypes.DocumentSnapshot | null>(null);
@@ -130,6 +134,16 @@ const RankingScreen: React.FC = () => {
   };
 
   useEffect(() => {
+    if (operation) {
+      if (operation === 'plus') onPressSortType(sortTypes[0]);
+      if (operation === 'division') onPressSortType(sortTypes[1]);
+      if (operation === 'multiply') onPressSortType(sortTypes[3]);
+      if (operation === 'subtraction') onPressSortType(sortTypes[4]);
+      if (operation === 'mix') onPressSortType(sortTypes[5]);
+    }
+  }, []);
+
+  useEffect(() => {
     if (isRefreshing.current === true) {
       isRefreshing.current = false;
       fetchData();
@@ -143,7 +157,7 @@ const RankingScreen: React.FC = () => {
   return (
     <SafeAreaView edges={['bottom']} style={styles.container}>
       <CustomHeader
-        title={selectedLanguage.ranking}
+        title={`${selectedSortType} ${selectedLanguage.ranking}`}
         rightContent={() => (
           <RightContent
             sortTypes={sortTypes}

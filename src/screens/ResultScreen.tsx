@@ -64,7 +64,7 @@ const ResultScreen: React.FC<ResultScreenProps> = () => {
   const {questionsList, operation, level} = route.params;
   const {selectedTheme} = useThemeStore();
   const {selectedLanguage} = useLanguageStore();
-  const {updateHistory} = useDataStore();
+  const {updateHistory, updateLeaderboard} = useDataStore();
   const {playCount, setPlayCount} = useAppStateStore();
   const isUpdated = useRef<boolean>(false);
 
@@ -79,7 +79,9 @@ const ResultScreen: React.FC<ResultScreenProps> = () => {
   });
 
   const onPressRanking = () => {
-    navigation.navigate('RankingScreen');
+    navigation.navigate('RankingScreen', {
+      operation,
+    });
   };
 
   const onPressHistory = () => {
@@ -89,7 +91,8 @@ const ResultScreen: React.FC<ResultScreenProps> = () => {
   const update = async () => {
     if (isUpdated.current) return;
     const result = await updateHistory(questionsList, operation);
-    setPlayCount(playCount + 1);
+    await updateLeaderboard(questionsList, operation);
+    setPlayCount(playCount - 1);
     if (result) {
       isUpdated.current = true;
     }

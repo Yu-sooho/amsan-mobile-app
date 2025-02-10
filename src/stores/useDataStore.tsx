@@ -17,6 +17,11 @@ interface DataState {
     questionsList: QuestionType[],
     operation: PlayType,
   ) => Promise<boolean>;
+  getMyLeaderboard: (operation: string) => Promise<HistoryProps | undefined>;
+  updateLeaderboard: (
+    questionsList: QuestionType[],
+    operation: PlayType,
+  ) => Promise<boolean>;
   uploadImage: (pathToFile: string) => Promise<string[] | undefined>;
   getHistory: (
     pageSize?: number,
@@ -81,6 +86,119 @@ const useDataStore = create<DataState>()(
             );
 
           console.log('History updated for user:', userInfo.uid);
+          return true;
+        } catch (error) {
+          console.log('updateHistory error', error);
+          return false;
+        }
+      },
+      getMyLeaderboard: async operation => {
+        const {userInfo} = useAuthStore.getState();
+        if (!userInfo) {
+          console.log('getMyLeaderboard 로그인 실패');
+          return undefined;
+        }
+
+        try {
+          const querySnapshot = await firestore()
+            .collection('leaderboard')
+            .where('uid', '==', userInfo.uid)
+            .where('operation', '==', operation)
+            .orderBy('correctCount', 'desc')
+            .orderBy('timestamp', 'desc')
+            .limit(1)
+            .get();
+
+          if (querySnapshot.empty) {
+            console.log('getMyLeaderboard 데이터 없음');
+            return undefined;
+          }
+
+          const bestHistoryDoc = querySnapshot.docs[0];
+          if (!bestHistoryDoc.exists) {
+            console.log('getMyLeaderboard 데이터 없음');
+            return undefined;
+          }
+
+          const bestHistory = bestHistoryDoc.data();
+
+          console.log('getMyLeaderboard 데이터 있음', bestHistory);
+
+          const result: HistoryProps = {
+            id: bestHistoryDoc.id,
+            questionsList: bestHistory.questionsList ?? [],
+            timestamp: bestHistory.timestamp ?? firestore.Timestamp.now(),
+            operation: bestHistory.operation,
+            correctCount: bestHistory.correctCount,
+            displayName: bestHistory.displayName,
+            profileImageUrl:
+              bestHistory.profileImageUrl256 ||
+              bestHistory.profileImageUrl512 ||
+              bestHistory.profileImageUrl128 ||
+              bestHistory.profileImageUrl,
+            uid: bestHistory.uid,
+          };
+
+          return result;
+        } catch (error) {
+          console.log(error);
+          return undefined;
+        }
+      },
+      updateLeaderboard: async (questionsList, operation) => {
+        try {
+          const {userInfo} = useAuthStore.getState();
+          const {getMyLeaderboard} = useDataStore.getState();
+
+          if (!userInfo) {
+            console.log('updateLeaderboard 로그인 실패');
+            return false;
+          }
+
+          const myLearderBoader = await getMyLeaderboard(operation);
+
+          const correctCount = Array.isArray(questionsList)
+            ? questionsList.filter(q => q.isCorrect).length
+            : 0;
+
+          if (myLearderBoader && myLearderBoader.correctCount >= correctCount) {
+            console.log('updateLeaderboard 더 높은 데이터가 있습니다.');
+            return false;
+          }
+
+          if (myLearderBoader && myLearderBoader.correctCount < correctCount) {
+            console.log('updateLeaderboard 이전 데이터가 삭제되었습니다.');
+            await firestore()
+              .collection('leaderboard')
+              .doc(myLearderBoader.id)
+              .delete();
+          }
+
+          const learderBoard = {
+            questionsList,
+            operation: operation,
+            correctCount,
+            displayName: userInfo.displayName,
+            profileImageUrl:
+              userInfo.profileImageUrl256 ||
+              userInfo.profileImageUrl512 ||
+              userInfo.profileImageUrl128 ||
+              userInfo.profileImageUrl,
+            uid: userInfo.uid,
+          };
+
+          await firestore()
+            .collection('leaderboard')
+            .doc()
+            .set(
+              {
+                ...learderBoard,
+                timestamp: firestore.FieldValue.serverTimestamp(),
+              },
+              {merge: true},
+            );
+
+          console.log('updateLeaderboard 기록 경신:', learderBoard);
           return true;
         } catch (error) {
           console.log('updateHistory error', error);
@@ -213,7 +331,7 @@ const useDataStore = create<DataState>()(
           const endTimestamp = firestore.Timestamp.fromDate(endDate);
 
           let query = firestore()
-            .collection('history')
+            .collection('leaderboard')
             .orderBy('correctCount', 'desc')
             .orderBy('timestamp', 'desc')
             .where('operation', '==', operation)
