@@ -1,5 +1,5 @@
 import {NavigationContainer} from '@react-navigation/native';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {RootStackNavigator} from './src';
 import {useAppStateStore, useAuthStore, useThemeStore} from './src/stores';
@@ -20,7 +20,6 @@ function App(): React.JSX.Element {
   const {setIsLogin, setLoginData, postUser, getUser, setUserInfo} =
     useAuthStore();
   const [initializing, setInitializing] = useState(true);
-  const hasRun = useRef<boolean>(false);
 
   const styles = StyleSheet.create({
     container: {
@@ -65,6 +64,7 @@ function App(): React.JSX.Element {
   });
 
   const fetchUserData = async (user: FirebaseAuthTypes.User) => {
+    console.log(user, 'FUFU');
     if (!user) return;
     const result = await getUser(user);
     if (!result) return;
@@ -75,9 +75,7 @@ function App(): React.JSX.Element {
     if (!user) {
       setIsLogin(false);
     }
-    if (hasRun.current) return;
     if (initializing) setInitializing(false);
-    hasRun.current = true;
     if (user) {
       setIsLogin(true);
       setLoginData(user);

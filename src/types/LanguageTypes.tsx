@@ -24,6 +24,7 @@ export type LanguageProps = {
   mix: string;
   custom: string;
   myInfo: string;
+  info: string;
   ranking: string;
   logout: string;
   confirm: string;

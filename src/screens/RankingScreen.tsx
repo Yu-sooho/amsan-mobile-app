@@ -8,7 +8,12 @@ import {
   View,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {useDataStore, useLanguageStore, useThemeStore} from '../stores';
+import {
+  useAuthStore,
+  useDataStore,
+  useLanguageStore,
+  useThemeStore,
+} from '../stores';
 import {CustomHeader, IconSliders, UserImageButton} from '../components';
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
@@ -61,6 +66,7 @@ const RightContent = ({
 const RankingScreen: React.FC = () => {
   const {selectedTheme} = useThemeStore();
   const {selectedLanguage} = useLanguageStore();
+  const {loginData} = useAuthStore();
   const {getRanking, setSelectedSortType, selectedSortType} = useDataStore();
   const isLoading = useRef<boolean>(false);
   const isEnded = useRef<boolean>(false);
@@ -154,6 +160,17 @@ const RankingScreen: React.FC = () => {
     onRefresh();
   }, [selectedSortType]);
 
+  const navigation =
+    useNavigation<StackNavigationProp<RootStackProps, 'RankingScreen'>>();
+
+  const onPressUserImage = (item: HistoryProps) => {
+    if (item.uid !== loginData?.uid) {
+      navigation.navigate('UserInfoScreen', {
+        uid: item.uid,
+      });
+    }
+  };
+
   return (
     <SafeAreaView edges={['bottom']} style={styles.container}>
       <CustomHeader
@@ -170,7 +187,9 @@ const RankingScreen: React.FC = () => {
       <FlatList
         data={rankingList}
         contentContainerStyle={styles.list}
-        renderItem={({item, index}) => <RenderItem item={item} index={index} />}
+        renderItem={({item, index}) => (
+          <RenderItem onPress={onPressUserImage} item={item} index={index} />
+        )}
         keyExtractor={item => `${item?.id}`}
         onEndReached={onEndReached}
         ListEmptyComponent={() => (
@@ -230,9 +249,16 @@ const ListFooterComponent = ({
   );
 };
 
-const RenderItem = ({item, index}: {item: HistoryProps; index: number}) => {
+const RenderItem = ({
+  onPress,
+  item,
+  index,
+}: {
+  onPress: (item: HistoryProps) => void;
+  item: HistoryProps;
+  index: number;
+}) => {
   const {font16Bold} = useTextStyles();
-
   const correctQuestions = item.questionsList.filter(q => q.isCorrect === true);
   const wrongQuestions = item.questionsList.filter(q => q.isCorrect === false);
 
@@ -280,13 +306,18 @@ const RenderItem = ({item, index}: {item: HistoryProps; index: number}) => {
     },
   });
 
+  const onPressUserImage = () => {
+    onPress(item);
+  };
+
   return (
-    <TouchableOpacity>
+    <TouchableOpacity onPress={onPressUserImage}>
       <View style={styles.container}>
         <View style={styles.textView}>
           <View style={styles.dateView}>
             <Text style={styles.date}>{`${index + 1}. `}</Text>
             <UserImageButton
+              disabled={true}
               size={sizeConverter(24)}
               url={item.profileImageUrl}
             />

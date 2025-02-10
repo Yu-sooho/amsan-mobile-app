@@ -10,6 +10,7 @@ export {default as ResultScreen} from './ResultScreen';
 export {default as RankingScreen} from './RankingScreen';
 export {default as HistoryScreen} from './HistoryScreen';
 export {default as InfoEditScreen} from './InfoEditScreen';
+export {default as UserInfoScreen} from './UserInfoScreen';
 
 export {default as LoadingScreen} from './LoadingScreen';
 

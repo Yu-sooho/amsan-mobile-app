@@ -2,17 +2,21 @@ import React, {useEffect, useRef, useState} from 'react';
 import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useDataStore, useLanguageStore, useThemeStore} from '../stores';
 import {CustomHeader} from '../components';
-import {HistoryProps} from '../types';
+import {HistoryProps, RootStackProps} from '../types';
 import {formatTimestamp, showToast, sizeConverter} from '../utils';
 import {useTextStyles} from '../styles';
 import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
 import {RefreshControl} from 'react-native-gesture-handler';
 import LottieView from 'lottie-react-native';
 import {lotties} from '../resources';
+import {RouteProp, useRoute} from '@react-navigation/native';
 
 const PAGE_SIZE = 20;
 
 const HistoryScreen: React.FC = () => {
+  const route = useRoute<RouteProp<RootStackProps, 'HistoryScreen'>>();
+  const user = route?.params?.user;
+
   const {selectedTheme} = useThemeStore();
   const {selectedLanguage} = useLanguageStore();
   const {getHistory} = useDataStore();
@@ -38,7 +42,7 @@ const HistoryScreen: React.FC = () => {
   const fetchData = async () => {
     if (isLoading.current || isEnded.current) return;
     isLoading.current = true;
-    const data = await getHistory(PAGE_SIZE, lastDoc.current);
+    const data = await getHistory(PAGE_SIZE, lastDoc.current, user?.uid);
     if (!data) {
       showToast({text: selectedLanguage.serverError});
       isEnded.current = true;
@@ -72,7 +76,13 @@ const HistoryScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <CustomHeader title={selectedLanguage.history} />
+      <CustomHeader
+        title={
+          user
+            ? `${user?.displayName} ${selectedLanguage.history}`
+            : selectedLanguage.history
+        }
+      />
       <FlatList
         data={historyList}
         contentContainerStyle={styles.list}

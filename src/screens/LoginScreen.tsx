@@ -132,6 +132,7 @@ const LoginScreen: React.FC = () => {
         identityToken,
         nonce,
       );
+      console.log(appleCredential);
       await auth().signInWithCredential(appleCredential);
       setIsLoading(false);
     } catch (error) {

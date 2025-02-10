@@ -9,6 +9,7 @@ import ImageResizer from '@bam.tech/react-native-image-resizer';
 import {Platform} from 'react-native';
 import {createJSONStorage, persist} from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {CurrentUser} from '../types/AuthTypes';
 
 interface DataState {
   selectedSortType: string;
@@ -26,6 +27,7 @@ interface DataState {
   getHistory: (
     pageSize?: number,
     lastDoc?: FirebaseFirestoreTypes.DocumentSnapshot | undefined | null,
+    uid?: string,
   ) => Promise<
     | {
         historyData: HistoryProps[];
@@ -44,6 +46,8 @@ interface DataState {
       }
     | undefined
   >;
+
+  getOtherUser: (uid: string) => Promise<CurrentUser | undefined>;
 }
 
 const useDataStore = create<DataState>()(
@@ -79,7 +83,8 @@ const useDataStore = create<DataState>()(
                   userInfo.profileImageUrl256 ||
                   userInfo.profileImageUrl512 ||
                   userInfo.profileImageUrl128 ||
-                  userInfo.profileImageUrl,
+                  userInfo.profileImageUrl ||
+                  '',
                 uid: userInfo.uid,
               },
               {merge: true},
@@ -183,7 +188,8 @@ const useDataStore = create<DataState>()(
               userInfo.profileImageUrl256 ||
               userInfo.profileImageUrl512 ||
               userInfo.profileImageUrl128 ||
-              userInfo.profileImageUrl,
+              userInfo.profileImageUrl ||
+              '',
             uid: userInfo.uid,
           };
 
@@ -201,7 +207,7 @@ const useDataStore = create<DataState>()(
           console.log('updateLeaderboard 기록 경신:', learderBoard);
           return true;
         } catch (error) {
-          console.log('updateHistory error', error);
+          console.log('updateLeaderboard error', error);
           return false;
         }
       },
@@ -259,7 +265,7 @@ const useDataStore = create<DataState>()(
           return undefined;
         }
       },
-      getHistory: async (pageSize = 20, lastDoc = null) => {
+      getHistory: async (pageSize = 20, lastDoc = null, uid) => {
         try {
           const {loginData} = useAuthStore.getState();
           if (!loginData) {
@@ -269,7 +275,7 @@ const useDataStore = create<DataState>()(
 
           let query = firestore()
             .collection('history')
-            .where('uid', '==', loginData.uid)
+            .where('uid', '==', uid || loginData.uid)
             .orderBy('timestamp', 'desc')
             .limit(pageSize);
 
@@ -372,6 +378,34 @@ const useDataStore = create<DataState>()(
             querySnapshot.docs[querySnapshot.docs.length - 1] || null;
 
           return {rankingData, lastDoc: lastVisibleDoc};
+        } catch (error) {
+          console.error('Error fetching history:', error);
+          return undefined;
+        }
+      },
+      getOtherUser: async (uid: string) => {
+        try {
+          const query = firestore().collection('user').where('uid', '==', uid);
+
+          const isRegisted = await query.get();
+
+          if (isRegisted.empty) {
+            return undefined;
+          }
+
+          const userDoc = isRegisted.docs[0];
+          const userData = userDoc.data();
+
+          const currentUser: CurrentUser = {
+            uid: userData.uid,
+            displayName: userData.displayName,
+            email: userData.email,
+            createdAt: userData.createdAt,
+            lastLogin: userData.lastLogin,
+            ...userData,
+          };
+
+          return currentUser;
         } catch (error) {
           console.error('Error fetching history:', error);
           return undefined;

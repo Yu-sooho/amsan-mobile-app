@@ -16,6 +16,7 @@ type ImageProps = {
   containerStyle?: StyleProp<ViewStyle>;
   size?: number;
   onPress?: () => void;
+  disabled?: boolean;
 };
 
 const UserImageButton: React.FC<ImageProps> = ({
@@ -23,6 +24,7 @@ const UserImageButton: React.FC<ImageProps> = ({
   containerStyle,
   url,
   onPress,
+  disabled,
 }) => {
   const {selectedTheme} = useThemeStore();
   const styles = StyleSheet.create({
@@ -46,15 +48,17 @@ const UserImageButton: React.FC<ImageProps> = ({
   });
 
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      style={[styles.container, containerStyle]}>
-      {url ? (
-        <FastImage source={{uri: url}} style={styles.image} />
-      ) : (
-        <DefaultUserIcon size={size} />
-      )}
-    </TouchableOpacity>
+    <View pointerEvents={disabled ? 'none' : 'auto'}>
+      <TouchableOpacity
+        onPress={onPress}
+        style={[styles.container, containerStyle]}>
+        {url ? (
+          <FastImage source={{uri: url}} style={styles.image} />
+        ) : (
+          <DefaultUserIcon size={size} />
+        )}
+      </TouchableOpacity>
+    </View>
   );
 };
 

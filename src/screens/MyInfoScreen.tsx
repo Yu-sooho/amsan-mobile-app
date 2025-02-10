@@ -86,7 +86,7 @@ const MyInfoScreen: React.FC = () => {
   };
 
   const onPressRanking = () => {
-    navigation.navigate('RankingScreen');
+    navigation.navigate('RankingScreen', {});
   };
 
   const onPressHistory = () => {

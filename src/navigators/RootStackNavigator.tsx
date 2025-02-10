@@ -21,6 +21,7 @@ import {
   ResultScreen,
   SettingScreen,
   ThemeScreen,
+  UserInfoScreen,
 } from '../screens';
 import {RootStackProps} from '../types/NavigationTypes';
 
@@ -37,6 +38,7 @@ const RootStack = createStackNavigator<RootStackProps>({
     ResultScreen: ResultScreen,
     HistoryScreen: HistoryScreen,
     RankingScreen: RankingScreen,
+    UserInfoScreen: UserInfoScreen,
     InfoEditScreen: InfoEditScreen,
     CustomPopupScreen: CustomPopupScreen,
     CustomModalScreen: CustomModalScreen,
@@ -70,6 +72,7 @@ const RootStackNavigator = () => {
       <RootStack.Screen name='RankingScreen' component={RankingScreen} />
       <RootStack.Screen name='HistoryScreen' component={HistoryScreen} />
       <RootStack.Screen name='InfoEditScreen' component={InfoEditScreen} />
+      <RootStack.Screen name='UserInfoScreen' component={UserInfoScreen} />
 
       <RootStack.Screen
         name='PlayScreen'

@@ -1,3 +1,4 @@
+import {CurrentUser} from './AuthTypes';
 import {QuestionType} from './ComponentTypes';
 
 export type RootStackProps = {
@@ -9,7 +10,10 @@ export type RootStackProps = {
   PlayScreen: {operation: PlayType; level: number};
   MyInfoScreen: undefined;
   LoginScreen: undefined;
-  HistoryScreen: undefined;
+  HistoryScreen: {user?: CurrentUser} | undefined;
+  UserInfoScreen: {
+    uid: string;
+  };
   RankingScreen: {
     operation?: PlayType;
   };
