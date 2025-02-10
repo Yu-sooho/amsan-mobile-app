@@ -1,5 +1,6 @@
 import {Timestamp} from '@react-native-firebase/firestore';
 import {PlayType} from './NavigationTypes';
+import {BasicUser} from './AuthTypes';
 
 export type QuestionType = {
   question: string;
@@ -13,4 +14,4 @@ export type HistoryProps = {
   id: string;
   operation: PlayType;
   correctCount: number;
-};
+} & BasicUser;

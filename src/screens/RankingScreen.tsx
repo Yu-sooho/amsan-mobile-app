@@ -9,17 +9,17 @@ import {
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useDataStore, useLanguageStore, useThemeStore} from '../stores';
-import {CustomHeader, IconSliders} from '../components';
+import {CustomHeader, IconSliders, UserImageButton} from '../components';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {HistoryProps, PlayType, RootStackProps} from '../types';
-import {formatTimestamp, showToast, sizeConverter} from '../utils';
+import {showToast, sizeConverter} from '../utils';
 import {useTextStyles} from '../styles';
+import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
 import LottieView from 'lottie-react-native';
 import {lotties} from '../resources';
-import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 30;
 
 const RightContent = ({
   onPressSortType,
@@ -60,7 +60,7 @@ const RightContent = ({
 const RankingScreen: React.FC = () => {
   const {selectedTheme} = useThemeStore();
   const {selectedLanguage} = useLanguageStore();
-  const {getRanking} = useDataStore();
+  const {getRanking, setSelectedSortType, selectedSortType} = useDataStore();
   const isLoading = useRef<boolean>(false);
   const isEnded = useRef<boolean>(false);
   const isRefreshing = useRef<boolean>(false);
@@ -88,18 +88,16 @@ const RankingScreen: React.FC = () => {
     selectedLanguage.mix,
   ];
 
-  const [selectedValue, setSelectedValue] = useState(selectedLanguage.mix);
-
   const onPressSortType = (value: string) => {
-    setSelectedValue(value);
+    setSelectedSortType(value);
   };
 
   const checkType = (): PlayType => {
-    if (selectedValue === sortTypes[0]) return 'plus';
-    if (selectedValue === sortTypes[1]) return 'division';
-    if (selectedValue === sortTypes[2]) return 'multiply';
-    if (selectedValue === sortTypes[3]) return 'subtraction';
-    if (selectedValue === sortTypes[4]) return 'mix';
+    if (selectedSortType === sortTypes[0]) return 'plus';
+    if (selectedSortType === sortTypes[1]) return 'division';
+    if (selectedSortType === sortTypes[2]) return 'multiply';
+    if (selectedSortType === sortTypes[3]) return 'subtraction';
+    if (selectedSortType === sortTypes[4]) return 'mix';
     return 'custom';
   };
 
@@ -120,15 +118,15 @@ const RankingScreen: React.FC = () => {
     isLoading.current = false;
   };
 
-  const onEndReached = () => {
-    fetchData();
-  };
-
   const onRefresh = async () => {
     lastDoc.current = null;
     isEnded.current = false;
     setRankingList([]);
     isRefreshing.current = true;
+  };
+
+  const onEndReached = () => {
+    fetchData();
   };
 
   useEffect(() => {
@@ -140,7 +138,7 @@ const RankingScreen: React.FC = () => {
 
   useEffect(() => {
     onRefresh();
-  }, [selectedValue]);
+  }, [selectedSortType]);
 
   return (
     <SafeAreaView edges={['bottom']} style={styles.container}>
@@ -149,7 +147,7 @@ const RankingScreen: React.FC = () => {
         rightContent={() => (
           <RightContent
             sortTypes={sortTypes}
-            selectedValue={selectedValue}
+            selectedValue={selectedSortType}
             onPressSortType={onPressSortType}
           />
         )}
@@ -160,6 +158,7 @@ const RankingScreen: React.FC = () => {
         contentContainerStyle={styles.list}
         renderItem={({item, index}) => <RenderItem item={item} index={index} />}
         keyExtractor={item => `${item?.id}`}
+        onEndReached={onEndReached}
         ListEmptyComponent={() => (
           <ListEmptyComponent
             isRefresh={isRefreshing.current}
@@ -181,16 +180,44 @@ const RankingScreen: React.FC = () => {
             isEnded={isEnded.current}
           />
         )}
-        onEndReached={onEndReached}
         scrollEventThrottle={200}
       />
     </SafeAreaView>
   );
 };
 
+const ListFooterComponent = ({
+  isRefresh,
+  isEnded,
+}: {
+  isRefresh: boolean;
+  isEnded: boolean;
+}) => {
+  const styles = StyleSheet.create({
+    container: {
+      paddingBottom: sizeConverter(80),
+      paddingTop: sizeConverter(40),
+    },
+  });
+
+  if (isRefresh) return null;
+
+  if (isEnded) return null;
+
+  return (
+    <View style={styles.container}>
+      <LottieView
+        source={lotties.lottie_loading_white}
+        style={{width: sizeConverter(64), height: sizeConverter(64)}}
+        autoPlay
+        loop
+      />
+    </View>
+  );
+};
+
 const RenderItem = ({item, index}: {item: HistoryProps; index: number}) => {
   const {font16Bold} = useTextStyles();
-  const date = formatTimestamp(item.timestamp);
 
   const correctQuestions = item.questionsList.filter(q => q.isCorrect === true);
   const wrongQuestions = item.questionsList.filter(q => q.isCorrect === false);
@@ -244,11 +271,12 @@ const RenderItem = ({item, index}: {item: HistoryProps; index: number}) => {
       <View style={styles.container}>
         <View style={styles.textView}>
           <View style={styles.dateView}>
-            <Text
-              style={
-                styles.date
-              }>{`${index + 1}.  ${date?.year} ${date?.month} ${date?.day}  `}</Text>
-            <Text style={styles.date}>{`${date?.hours}:${date?.minutes}`}</Text>
+            <Text style={styles.date}>{`${index + 1}. `}</Text>
+            <UserImageButton
+              size={sizeConverter(24)}
+              url={item.profileImageUrl}
+            />
+            <Text style={styles.date}>{`${item.displayName} `}</Text>
           </View>
           <View style={styles.textAllView}>
             <View style={styles.checkView}>
@@ -298,33 +326,4 @@ const ListEmptyComponent = ({
   );
 };
 
-const ListFooterComponent = ({
-  isRefresh,
-  isEnded,
-}: {
-  isRefresh: boolean;
-  isEnded: boolean;
-}) => {
-  const styles = StyleSheet.create({
-    container: {
-      paddingBottom: sizeConverter(80),
-      paddingTop: sizeConverter(40),
-    },
-  });
-
-  if (isRefresh) return null;
-
-  if (isEnded) return null;
-
-  return (
-    <View style={styles.container}>
-      <LottieView
-        source={lotties.lottie_loading_white}
-        style={{width: sizeConverter(64), height: sizeConverter(64)}}
-        autoPlay
-        loop
-      />
-    </View>
-  );
-};
 export default RankingScreen;

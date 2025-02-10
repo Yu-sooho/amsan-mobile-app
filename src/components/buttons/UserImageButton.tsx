@@ -41,7 +41,6 @@ const UserImageButton: React.FC<ImageProps> = ({
       borderWidth: sizeConverter(1),
       height: size || sizeConverter(120),
       justifyContent: 'center',
-      paddingHorizontal: sizeConverter(20),
       width: size || sizeConverter(120),
     },
   });
@@ -69,7 +68,6 @@ const DefaultUserIcon: React.FC<{size?: number}> = ({size}) => {
       borderWidth: sizeConverter(1),
       height: size || sizeConverter(120),
       justifyContent: 'center',
-      paddingHorizontal: sizeConverter(20),
       width: size || sizeConverter(120),
     },
     image: {

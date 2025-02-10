@@ -16,7 +16,7 @@ const interstitial = InterstitialAd.createForAdRequest(
 );
 
 const InterstitialAds: React.FC = () => {
-  const {playCount} = useAppStateStore();
+  const {playCount, setPlayCount} = useAppStateStore();
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -43,6 +43,7 @@ const InterstitialAds: React.FC = () => {
           StatusBar.setHidden(false);
         }
         setLoaded(false);
+        setPlayCount(playCount + 1);
       },
     );
 

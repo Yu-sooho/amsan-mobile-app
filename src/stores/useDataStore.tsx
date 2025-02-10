@@ -7,8 +7,12 @@ import useAuthStore from './useAuthStore';
 import storage from '@react-native-firebase/storage';
 import ImageResizer from '@bam.tech/react-native-image-resizer';
 import {Platform} from 'react-native';
+import {createJSONStorage, persist} from 'zustand/middleware';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface DataState {
+  selectedSortType: string;
+  setSelectedSortType: (sortType: string) => void;
   updateHistory: (
     questionsList: QuestionType[],
     operation: PlayType,
@@ -37,193 +41,234 @@ interface DataState {
   >;
 }
 
-const useDataStore = create<DataState>(() => ({
-  updateHistory: async (questionsList, operation) => {
-    try {
-      const {loginData} = useAuthStore.getState();
+const useDataStore = create<DataState>()(
+  persist(
+    set => ({
+      selectedSortType: 'mix',
+      setSelectedSortType: (value: string) =>
+        set(() => ({selectedSortType: value})),
+      updateHistory: async (questionsList, operation) => {
+        try {
+          const {userInfo} = useAuthStore.getState();
 
-      if (!loginData) {
-        console.log('User is not logged in.');
-        return false;
-      }
+          if (!userInfo) {
+            console.log('User is not logged in.');
+            return false;
+          }
 
-      const correctCount = Array.isArray(questionsList)
-        ? questionsList.filter(q => q.isCorrect).length
-        : 0;
+          const correctCount = Array.isArray(questionsList)
+            ? questionsList.filter(q => q.isCorrect).length
+            : 0;
 
-      await firestore().collection('history').doc().set(
-        {
-          uid: loginData.uid,
-          questionsList,
-          timestamp: firestore.FieldValue.serverTimestamp(),
-          operation: operation,
-          correctCount,
-        },
-        {merge: true},
-      );
+          await firestore()
+            .collection('history')
+            .doc()
+            .set(
+              {
+                questionsList,
+                timestamp: firestore.FieldValue.serverTimestamp(),
+                operation: operation,
+                correctCount,
+                displayName: userInfo.displayName,
+                profileImageUrl:
+                  userInfo.profileImageUrl256 ||
+                  userInfo.profileImageUrl512 ||
+                  userInfo.profileImageUrl128 ||
+                  userInfo.profileImageUrl,
+                uid: userInfo.uid,
+              },
+              {merge: true},
+            );
 
-      console.log('History updated for user:', loginData.uid);
-      return true;
-    } catch (error) {
-      console.log('updateHistory error', error);
-      return false;
-    }
-  },
-  uploadImage: async (pathToFile: string) => {
-    try {
-      const {loginData} = useAuthStore.getState();
-      if (!loginData) {
-        console.log('User is not logged in.');
-        return undefined;
-      }
-      const fileNames = [];
-      const fileExtension = pathToFile.split('.').pop() || '';
-      const re = await storage()
-        .ref(`profiles/${loginData.uid}.${fileExtension}`)
-        .putFile(pathToFile);
-      fileNames.push(
-        Platform.OS === 'android' ? re.metadata.fullPath : re.metadata.name,
-      );
-      const thumbnailSizes = [128, 256, 512];
-      for (const size of thumbnailSizes) {
-        const resizedImage = await ImageResizer.createResizedImage(
-          pathToFile,
-          size,
-          size,
-          'JPEG',
-          90,
-          0,
-          undefined,
-          false,
-          {mode: 'contain'},
-        );
+          console.log('History updated for user:', userInfo.uid);
+          return true;
+        } catch (error) {
+          console.log('updateHistory error', error);
+          return false;
+        }
+      },
+      uploadImage: async (pathToFile: string) => {
+        try {
+          const {loginData} = useAuthStore.getState();
+          if (!loginData) {
+            console.log('User is not logged in.');
+            return undefined;
+          }
+          const fileNames = [];
+          const fileExtension = pathToFile.split('.').pop() || '';
+          const re = await storage()
+            .ref(`profiles/${loginData.uid}.${fileExtension}`)
+            .putFile(pathToFile);
+          fileNames.push(
+            Platform.OS === 'android' ? re.metadata.fullPath : re.metadata.name,
+          );
+          const thumbnailSizes = [128, 256, 512];
+          for (const size of thumbnailSizes) {
+            const resizedImage = await ImageResizer.createResizedImage(
+              pathToFile,
+              size,
+              size,
+              'JPEG',
+              90,
+              0,
+              undefined,
+              false,
+              {mode: 'contain'},
+            );
 
-        const thumbnailPath = `profiles/${loginData.uid}_${size}.${fileExtension}`;
-        const reuslt = await storage()
-          .ref(thumbnailPath)
-          .putFile(resizedImage.uri);
-        fileNames.push(
-          Platform.OS === 'android'
-            ? reuslt.metadata.fullPath
-            : reuslt.metadata.name,
-        );
-      }
+            const thumbnailPath = `profiles/${loginData.uid}_${size}.${fileExtension}`;
+            const reuslt = await storage()
+              .ref(thumbnailPath)
+              .putFile(resizedImage.uri);
+            fileNames.push(
+              Platform.OS === 'android'
+                ? reuslt.metadata.fullPath
+                : reuslt.metadata.name,
+            );
+          }
 
-      console.log('업로드 완료', fileNames);
+          console.log('업로드 완료', fileNames);
 
-      const urls = [];
-      for (const name of fileNames) {
-        const url = await storage().ref(name).getDownloadURL();
-        urls.push(url);
-      }
+          const urls = [];
+          for (const name of fileNames) {
+            const url = await storage().ref(name).getDownloadURL();
+            urls.push(url);
+          }
 
-      return urls;
-    } catch (error) {
-      console.log(error);
-      return undefined;
-    }
-  },
-  getHistory: async (pageSize = 20, lastDoc = null) => {
-    try {
-      const {loginData} = useAuthStore.getState();
-      if (!loginData) {
-        console.log('User is not logged in.');
-        return undefined;
-      }
+          return urls;
+        } catch (error) {
+          console.log(error);
+          return undefined;
+        }
+      },
+      getHistory: async (pageSize = 20, lastDoc = null) => {
+        try {
+          const {loginData} = useAuthStore.getState();
+          if (!loginData) {
+            console.log('User is not logged in.');
+            return undefined;
+          }
 
-      let query = firestore()
-        .collection('history')
-        .where('uid', '==', loginData.uid)
-        .orderBy('timestamp', 'desc')
-        .limit(pageSize);
+          let query = firestore()
+            .collection('history')
+            .where('uid', '==', loginData.uid)
+            .orderBy('timestamp', 'desc')
+            .limit(pageSize);
 
-      if (lastDoc) {
-        query = query.startAfter(lastDoc);
-      }
+          if (lastDoc) {
+            query = query.startAfter(lastDoc);
+          }
 
-      const querySnapshot = await query.get();
+          const querySnapshot = await query.get();
 
-      if (querySnapshot.empty) {
-        return {historyData: [], lastDoc: null};
-      }
+          if (querySnapshot.empty) {
+            return {historyData: [], lastDoc: null};
+          }
 
-      const historyData: HistoryProps[] = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        questionsList: doc.data().questionsList ?? [],
-        timestamp: doc.data().timestamp ?? firestore.Timestamp.now(),
-        operation: doc.data().operation,
-        correctCount: doc.data().correctCount,
-      }));
+          const historyData: HistoryProps[] = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            questionsList: doc.data().questionsList ?? [],
+            timestamp: doc.data().timestamp ?? firestore.Timestamp.now(),
+            operation: doc.data().operation,
+            correctCount: doc.data().correctCount,
+            displayName: doc.data().displayName,
+            profileImageUrl:
+              doc.data().profileImageUrl256 ||
+              doc.data().profileImageUrl512 ||
+              doc.data().profileImageUrl128 ||
+              doc.data().profileImageUrl,
+            uid: doc.data().uid,
+          }));
 
-      const lastVisibleDoc =
-        querySnapshot.docs[querySnapshot.docs.length - 1] || null;
-      const historys = {historyData, lastDoc: lastVisibleDoc};
-      console.log('getHistory', historys);
-      return historys;
-    } catch (error) {
-      console.error('Error fetching history:', error);
-      return undefined;
-    }
-  },
+          const lastVisibleDoc =
+            querySnapshot.docs[querySnapshot.docs.length - 1] || null;
+          const historys = {historyData, lastDoc: lastVisibleDoc};
+          console.log('getHistory', historys);
+          return historys;
+        } catch (error) {
+          console.error('Error fetching history:', error);
+          return undefined;
+        }
+      },
 
-  getRanking: async (operation, pageSize = 20, lastDoc = null) => {
-    try {
-      const {loginData} = useAuthStore.getState();
-      if (!loginData) {
-        console.log('User is not logged in.');
-        return undefined;
-      }
-      const now = new Date();
-      const startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-      const endDate = new Date(
-        now.getFullYear(),
-        now.getMonth() + 1,
-        0,
-        23,
-        59,
-        59,
-      );
+      getRanking: async (operation, pageSize = 30, lastDoc = null) => {
+        try {
+          const {loginData} = useAuthStore.getState();
+          if (!loginData) {
+            console.log('User is not logged in.');
+            return undefined;
+          }
+          const now = new Date();
+          const startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+          const endDate = new Date(
+            now.getFullYear(),
+            now.getMonth() + 1,
+            0,
+            23,
+            59,
+            59,
+          );
 
-      const startTimestamp = firestore.Timestamp.fromDate(startDate);
-      const endTimestamp = firestore.Timestamp.fromDate(endDate);
-      console.log(operation, startTimestamp, endTimestamp, pageSize, 'FUFU');
+          const startTimestamp = firestore.Timestamp.fromDate(startDate);
+          const endTimestamp = firestore.Timestamp.fromDate(endDate);
 
-      let query = firestore()
-        .collection('history')
-        .where('operation', '==', operation)
-        .where('timestamp', '>=', startTimestamp)
-        .where('timestamp', '<=', endTimestamp)
-        .orderBy('timestamp', 'desc')
-        .orderBy('correctCount', 'desc')
-        .limit(pageSize);
+          let query = firestore()
+            .collection('history')
+            .orderBy('correctCount', 'desc')
+            .orderBy('timestamp', 'desc')
+            .where('operation', '==', operation)
+            .where('timestamp', '>=', startTimestamp)
+            .where('timestamp', '<=', endTimestamp)
+            .limit(pageSize);
 
-      if (lastDoc) {
-        query = query.startAfter(lastDoc);
-      }
+          if (lastDoc) {
+            query = query.startAfter(lastDoc);
+          }
 
-      const querySnapshot = await query.get();
+          const querySnapshot = await query.get();
 
-      if (querySnapshot.empty) {
-        return {rankingData: [], lastDoc: null};
-      }
+          console.log(querySnapshot);
 
-      const rankingData: HistoryProps[] = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        questionsList: doc.data().questionsList ?? [],
-        timestamp: doc.data().timestamp ?? firestore.Timestamp.now(),
-        operation: doc.data().operation,
-        correctCount: doc.data().correctCount,
-      }));
+          if (querySnapshot.empty) {
+            return {rankingData: [], lastDoc: null};
+          }
 
-      const lastVisibleDoc =
-        querySnapshot.docs[querySnapshot.docs.length - 1] || null;
+          const rankingData: HistoryProps[] = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            questionsList: doc.data().questionsList ?? [],
+            timestamp: doc.data().timestamp ?? firestore.Timestamp.now(),
+            operation: doc.data().operation,
+            correctCount: doc.data().correctCount,
+            displayName: doc.data().displayName,
+            profileImageUrl:
+              doc.data().profileImageUrl256 ||
+              doc.data().profileImageUrl512 ||
+              doc.data().profileImageUrl128 ||
+              doc.data().profileImageUrl,
+            uid: doc.data().uid,
+          }));
 
-      return {rankingData, lastDoc: lastVisibleDoc};
-    } catch (error) {
-      console.error('Error fetching history:', error);
-      return undefined;
-    }
-  },
-}));
+          rankingData.sort((a, b) => b.correctCount - a.correctCount);
+
+          const lastVisibleDoc =
+            querySnapshot.docs[querySnapshot.docs.length - 1] || null;
+
+          return {rankingData, lastDoc: lastVisibleDoc};
+        } catch (error) {
+          console.error('Error fetching history:', error);
+          return undefined;
+        }
+      },
+    }),
+    {
+      name: 'data-storage',
+      storage: createJSONStorage(() => AsyncStorage),
+      partialize: state =>
+        ({
+          selectedSortType: state.selectedSortType ?? 'mix',
+        }) as Partial<DataState>,
+    },
+  ),
+);
 
 export default useDataStore;
