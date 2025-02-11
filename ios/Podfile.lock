@@ -3153,6 +3153,11 @@ PODS:
     - Firebase/Firestore (= 11.7.0)
     - React-Core
     - RNFBApp
+  - RNFBMessaging (21.7.1):
+    - Firebase/Messaging (= 11.7.0)
+    - FirebaseCoreExtension
+    - React-Core
+    - RNFBApp
   - RNFBStorage (21.7.1):
     - Firebase/Storage (= 11.7.0)
     - React-Core
@@ -3392,6 +3397,7 @@ DEPENDENCIES:
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBAuth (from `../node_modules/@react-native-firebase/auth`)"
   - "RNFBFirestore (from `../node_modules/@react-native-firebase/firestore`)"
+  - "RNFBMessaging (from `../node_modules/@react-native-firebase/messaging`)"
   - "RNFBStorage (from `../node_modules/@react-native-firebase/storage`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNGoogleMobileAds (from `../node_modules/react-native-google-mobile-ads`)
@@ -3598,6 +3604,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/auth"
   RNFBFirestore:
     :path: "../node_modules/@react-native-firebase/firestore"
+  RNFBMessaging:
+    :path: "../node_modules/@react-native-firebase/messaging"
   RNFBStorage:
     :path: "../node_modules/@react-native-firebase/storage"
   RNGestureHandler:
@@ -3727,6 +3735,7 @@ SPEC CHECKSUMS:
   RNFBApp: 67229e8085ab427c935defad2a6c3fc57c7f656d
   RNFBAuth: 13f641fec88aee849a628b54332425b2e36f14db
   RNFBFirestore: 2e4b7bf2824bb68bce11e1036413d4ae49c16343
+  RNFBMessaging: e485940b19e3cff5eeb0f7f095d480576cbab505
   RNFBStorage: bdbb9e04c1496de82fa7695449a9f4461ec1d0c7
   RNGestureHandler: 75a1894590b15c560094c2b09c5dce6a64eefa29
   RNGoogleMobileAds: 1cf85b41d06de714f6a12b2b560d18661937200b

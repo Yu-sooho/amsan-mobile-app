@@ -13,6 +13,7 @@ export type LanguageProps = {
   theme: string;
   language: string;
   fontSize: string;
+  alram: string;
   dark: string;
   light: string;
   eng: string;

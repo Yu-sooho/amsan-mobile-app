@@ -4,6 +4,7 @@ import {QuestionType} from './ComponentTypes';
 export type RootStackProps = {
   MainScreen: undefined;
   SettingScreen: undefined;
+  AlramScreen: undefined;
   ThemeScreen: undefined;
   LanguageScreen: undefined;
   FontSizeScreen: undefined;

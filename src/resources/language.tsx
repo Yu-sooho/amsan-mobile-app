@@ -32,6 +32,7 @@ export const eng: LanguageProps = {
   email: 'email',
   name: 'name',
   save: 'save',
+  alram: 'alram',
 
   serverError: 'server error please retry',
   noHistoryList: 'no History list',
@@ -75,6 +76,7 @@ export const kor: LanguageProps = {
   email: 'Email',
   name: '이름',
   save: '저장',
+  alram: '알람',
 
   serverError: '다시 시도 해주세요',
   noHistoryList: '기록이 없습니다',

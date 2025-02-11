@@ -5,4 +5,6 @@ export type ThemeProps = {
   wrongColor: string;
   placeholderColor: string;
   backgourndColorOpacity: string;
+  switchTrue: string;
+  switchFalse: string;
 };

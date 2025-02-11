@@ -1,6 +1,6 @@
 import {NavigationContainer} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {Platform, StyleSheet, Text, View} from 'react-native';
 import {RootStackNavigator} from './src';
 import {useAppStateStore, useAuthStore, useThemeStore} from './src/stores';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
@@ -11,7 +11,8 @@ import {LoadingScreen} from './src/screens';
 import {useTextStyles} from './src/styles';
 import mobileAds from 'react-native-google-mobile-ads';
 import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
-import {BannerAds, InterstitialAds} from './src/components';
+import {AppStateChecker, BannerAds, InterstitialAds} from './src/components';
+import messaging from '@react-native-firebase/messaging';
 
 function App(): React.JSX.Element {
   const {selectedTheme} = useThemeStore();
@@ -116,10 +117,49 @@ function App(): React.JSX.Element {
       </View>
       <BannerAds />
       <InterstitialAds />
+      <AppStateChecker />
+      {Platform.OS === 'android' ? <PermissionAndroid /> : <PermissionIos />}
       {isLoading && <LoadingScreen />}
       <Toast config={toastConfig} />
     </>
   );
 }
+
+const PermissionIos = () => {
+  const requestMessage = async () => {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    if (enabled) {
+      console.log('Authorization status:', authStatus);
+    }
+  };
+
+  const checkApplicationPermission = async () => {
+    const authorizationStatus = await messaging().requestPermission();
+
+    if (authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED) {
+      console.log('User has notification permissions enabled.');
+    } else if (
+      authorizationStatus === messaging.AuthorizationStatus.PROVISIONAL
+    ) {
+      requestMessage();
+    } else {
+      requestMessage();
+    }
+  };
+
+  useEffect(() => {
+    checkApplicationPermission();
+  }, []);
+
+  return null;
+};
+
+const PermissionAndroid = () => {
+  return null;
+};
 
 export default App;

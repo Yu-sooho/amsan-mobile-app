@@ -45,6 +45,9 @@ const Content: React.FC = () => {
   const onPressFontSize = () => {
     navigation.navigate('FontSizeScreen');
   };
+  const onPressAlram = () => {
+    navigation.navigate('AlramScreen');
+  };
 
   const styles = StyleSheet.create({
     arrowButton: {
@@ -57,6 +60,11 @@ const Content: React.FC = () => {
 
   return (
     <View style={styles.container}>
+      <ArrowButton
+        style={styles.arrowButton}
+        onPress={onPressAlram}
+        text={selectedLanguage.alram}
+      />
       <ArrowButton
         style={styles.arrowButton}
         onPress={onPressTheme}

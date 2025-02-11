@@ -7,6 +7,7 @@ import {
   TransitionPresets,
 } from '@react-navigation/stack';
 import {
+  AlramScreen,
   CustomModalScreen,
   CustomPopupScreen,
   FontSizeScreen,
@@ -29,6 +30,7 @@ const RootStack = createStackNavigator<RootStackProps>({
   screens: {
     MainScreen: MainScreen,
     SettingScreen: SettingScreen,
+    AlramScreen: AlramScreen,
     ThemeScreen: ThemeScreen,
     LanguageScreen: LanguageScreen,
     FontSizeScreen: FontSizeScreen,
@@ -65,6 +67,7 @@ const RootStackNavigator = () => {
 
       {/* 설정 화면들 */}
       <RootStack.Screen name='SettingScreen' component={SettingScreen} />
+      <RootStack.Screen name='AlramScreen' component={AlramScreen} />
       <RootStack.Screen name='ThemeScreen' component={ThemeScreen} />
       <RootStack.Screen name='LanguageScreen' component={LanguageScreen} />
       <RootStack.Screen name='FontSizeScreen' component={FontSizeScreen} />
