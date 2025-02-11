@@ -1,8 +1,10 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Keyboard,
+  KeyboardAvoidingView,
   Linking,
   Platform,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -18,7 +20,7 @@ import {
   useThemeStore,
 } from '../stores';
 import {ConfirmButton, CustomHeader, UserImageButton} from '../components';
-import {showToast, sizeConverter} from '../utils';
+import {isEmail, showToast, sizeConverter} from '../utils';
 import {useTextStyles} from '../styles';
 import {CurrentUser} from '../types/AuthTypes';
 import {useNavigation} from '@react-navigation/native';
@@ -35,12 +37,13 @@ const PHOTO_LIBRARY =
 const InfoEditScreen: React.FC = () => {
   const {selectedTheme} = useThemeStore();
   const {selectedLanguage} = useLanguageStore();
-  const {userInfo, updateUser, setUserInfo} = useAuthStore();
+  const {userInfo, updateUser, setUserInfo, isDuplicatedEmail} = useAuthStore();
   const {setIsLoading} = useAppStateStore();
   const {uploadImage} = useDataStore();
   const {font16Bold} = useTextStyles();
   const [inputName, setInputName] = useState('');
   const [inputEmail, setInputEmail] = useState('');
+  const [emailError, setEmailError] = useState(false);
   const [selectedImage, setSelecetedImage] = useState<
     string | null | undefined
   >(null);
@@ -61,6 +64,9 @@ const InfoEditScreen: React.FC = () => {
       flex: 1,
       paddingTop: sizeConverter(44),
     },
+    contentContainerStyle: {
+      alignItems: 'center',
+    },
     text: {
       ...font16Bold,
       fontSize: sizeConverter(14),
@@ -70,6 +76,16 @@ const InfoEditScreen: React.FC = () => {
       ...font16Bold,
       borderBottomColor: selectedTheme.textColor,
       borderBottomWidth: sizeConverter(1),
+      height: sizeConverter(44),
+      marginHorizontal: sizeConverter(12),
+      marginTop: sizeConverter(12),
+      paddingHorizontal: sizeConverter(10),
+    },
+    textInputError: {
+      ...font16Bold,
+      borderBottomColor: selectedTheme.wrongColor,
+      borderBottomWidth: sizeConverter(1),
+      color: selectedTheme.wrongColor,
       height: sizeConverter(44),
       marginHorizontal: sizeConverter(12),
       marginTop: sizeConverter(12),
@@ -86,41 +102,64 @@ const InfoEditScreen: React.FC = () => {
     Keyboard.dismiss();
   };
 
-  const onPressSave = async () => {
-    if (!userInfo) return;
-    setIsLoading(true);
-    let imageUrls = null;
-    const user: CurrentUser = {
-      ...userInfo,
-      displayName: inputName || userInfo.displayName,
-      email: inputEmail || userInfo.email,
-    };
+  const checkDuplicatedEmail = async () => {
+    if (!inputEmail) return false;
+    if (inputEmail === userInfo?.email) return false;
+    const isDuplicated = await isDuplicatedEmail(inputEmail);
+    if (isDuplicated) return true;
+    return false;
+  };
 
-    if (selectedImage) {
-      imageUrls = await uploadImageData();
-      if (!imageUrls) {
+  const onPressSave = async () => {
+    try {
+      if (!userInfo) return;
+      setIsLoading(true);
+      let imageUrls = null;
+
+      const isDuplicated = await checkDuplicatedEmail();
+
+      if (isDuplicated) {
+        showToast({text: selectedLanguage.duplicatedEmail});
+        setIsLoading(false);
+        return true;
+      }
+
+      const user: CurrentUser = {
+        ...userInfo,
+        displayName: inputName || userInfo.displayName,
+        email: inputEmail || userInfo.email,
+      };
+
+      console.log(user, 'FUFU');
+      if (selectedImage) {
+        imageUrls = await uploadImageData();
+        if (!imageUrls) {
+          showToast({text: selectedLanguage.failedEdit});
+          setIsLoading(false);
+          return false;
+        }
+      }
+      if (imageUrls) {
+        user.profileImageUrl = imageUrls[0];
+        user.profileImageUrl128 = imageUrls[1];
+        user.profileImageUrl256 = imageUrls[2];
+        user.profileImageUrl512 = imageUrls[3];
+      }
+
+      const currentUser = await updateUser(user);
+      if (!currentUser) {
         showToast({text: selectedLanguage.failedEdit});
         setIsLoading(false);
-        return false;
+        return;
       }
-    }
-    if (imageUrls) {
-      user.profileImageUrl = imageUrls[0];
-      user.profileImageUrl128 = imageUrls[1];
-      user.profileImageUrl256 = imageUrls[2];
-      user.profileImageUrl512 = imageUrls[3];
-    }
 
-    const currentUser = await updateUser(user);
-    if (!currentUser) {
-      showToast({text: selectedLanguage.failedEdit});
+      showToast({text: selectedLanguage.successEdit});
+      setUserInfo(currentUser);
       setIsLoading(false);
-      return;
+      navigation.goBack();
+    } catch (error) {
+      console.log(error);
     }
-    showToast({text: selectedLanguage.successEdit});
-    setUserInfo(currentUser);
-    setIsLoading(false);
-    navigation.goBack();
   };
 
   const onChangeTextName = (text: string) => {
@@ -130,6 +169,15 @@ const InfoEditScreen: React.FC = () => {
   const onChangeTextEmail = (text: string) => {
     setInputEmail(text);
   };
+
+  useEffect(() => {
+    if (!inputEmail) {
+      setEmailError(false);
+    } else {
+      const result = isEmail(inputEmail);
+      setEmailError(!result);
+    }
+  }, [inputEmail]);
 
   const uploadImageData = async () => {
     if (!selectedImage) return;
@@ -176,37 +224,42 @@ const InfoEditScreen: React.FC = () => {
     <TouchableWithoutFeedback onPress={onPressBackground}>
       <SafeAreaView edges={['bottom']} style={styles.container}>
         <CustomHeader title={selectedLanguage.infoEditScreen} />
-        <View style={styles.content}>
-          <UserImageButton
-            onPress={onPressImageButton}
-            url={
-              selectedImage ||
-              userInfo?.profileImageUrl512 ||
-              userInfo?.profileImageUrl
-            }
-            size={sizeConverter(160)}
-          />
-          <View style={styles.textView}>
-            <Text style={styles.text}>{selectedLanguage.name}</Text>
-            <TextInput
-              onChangeText={onChangeTextName}
-              style={styles.textInput}
-              placeholder={userInfo?.displayName}
-              placeholderTextColor={selectedTheme.placeholderColor}
-              maxLength={12}
+        <KeyboardAvoidingView
+          style={styles.content}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}>
+          <ScrollView contentContainerStyle={styles.contentContainerStyle}>
+            <UserImageButton
+              onPress={onPressImageButton}
+              url={
+                selectedImage ||
+                userInfo?.profileImageUrl512 ||
+                userInfo?.profileImageUrl
+              }
+              size={sizeConverter(160)}
             />
-          </View>
-          <View style={styles.textView}>
-            <Text style={styles.text}>{selectedLanguage.email}</Text>
-            <TextInput
-              onChangeText={onChangeTextEmail}
-              style={styles.textInput}
-              placeholder={userInfo?.email}
-              placeholderTextColor={selectedTheme.placeholderColor}
-              maxLength={24}
-            />
-          </View>
-        </View>
+            <View style={styles.textView}>
+              <Text style={styles.text}>{selectedLanguage.name}</Text>
+              <TextInput
+                onChangeText={onChangeTextName}
+                style={styles.textInput}
+                placeholder={userInfo?.displayName}
+                placeholderTextColor={selectedTheme.placeholderColor}
+                maxLength={12}
+              />
+            </View>
+            <View style={styles.textView}>
+              <Text style={styles.text}>{selectedLanguage.email}</Text>
+              <TextInput
+                onChangeText={onChangeTextEmail}
+                style={emailError ? styles.textInputError : styles.textInput}
+                placeholder={userInfo?.email}
+                placeholderTextColor={selectedTheme.placeholderColor}
+                maxLength={24}
+              />
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
         <View style={styles.buttonView}>
           <ConfirmButton
             onPress={onPressSave}

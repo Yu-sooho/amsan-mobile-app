@@ -37,12 +37,13 @@ export type LanguageProps = {
   save: string;
 
   // Toast Message
-  logintError: string;
+  loginError: string;
   serverError: string;
   noHistoryList: string;
   noRankingList: string;
   failedEdit: string;
   successEdit: string;
+  duplicatedEmail: string;
 
   //Popup Message
   isLogout: string;

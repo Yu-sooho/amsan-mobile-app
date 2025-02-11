@@ -64,7 +64,6 @@ function App(): React.JSX.Element {
   });
 
   const fetchUserData = async (user: FirebaseAuthTypes.User) => {
-    console.log(user, 'FUFU');
     if (!user) return;
     const result = await getUser(user);
     if (!result) return;

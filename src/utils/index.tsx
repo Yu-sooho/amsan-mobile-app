@@ -2,7 +2,6 @@ import {Dimensions} from 'react-native';
 import Toast, {ToastPosition, ToastType} from 'react-native-toast-message';
 import {PlayType, QuestionType} from '../types';
 import {Timestamp} from '@react-native-firebase/firestore';
-import {CurrentUser} from '../types/AuthTypes';
 
 const BASE_WIDTH = 375;
 const BASE_HEIGHT = 812;
@@ -141,4 +140,43 @@ export const formatTimestamp = (
   const minutes = String(date.getMinutes()).padStart(2, '0');
 
   return {year, month, day, hours, minutes};
+};
+
+export const getRandomMathNickname = (): string => {
+  const adjectives = [
+    '빠른',
+    '영리한',
+    '천재적인',
+    '번개 같은',
+    '우주의',
+    '무한한',
+    '비밀스러운',
+    '헤드샷',
+    '절대적인',
+  ];
+  const mathWords = [
+    '계산기',
+    '수학왕',
+    '연산의 신',
+    '구구단 마스터',
+    '머리터짐',
+    '로그천재',
+    '파이브레인',
+    '방정식의 왕',
+    '미적분 도사',
+  ];
+  const symbols = ['⚡', '🔥', '🧠', '💡', '💥', '🚀', '🎯', '📚', '🔢'];
+
+  const randomAdj = adjectives[Math.floor(Math.random() * adjectives.length)];
+  const randomMath = mathWords[Math.floor(Math.random() * mathWords.length)];
+  const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)];
+
+  return `${randomSymbol} ${randomAdj}${randomMath}`;
+};
+
+export const isEmail = (value: string) => {
+  const emailRegex =
+    /^(?!\.)[a-zA-Z0-9._%+-]{1,64}(?<!\.)@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+  return emailRegex.test(value);
 };

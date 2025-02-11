@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {CurrentUser} from '../types/AuthTypes';
+import {getRandomMathNickname} from '../utils';
 
 interface AuthState {
   isLogin: boolean;
@@ -17,7 +18,9 @@ interface AuthState {
   userInfo: CurrentUser | null;
   setUserInfo: (user: CurrentUser | null) => void;
 
-  updateUser: (user: CurrentUser) => Promise<CurrentUser | false>;
+  isDuplicatedEmail: (email: string) => Promise<boolean>;
+
+  updateUser: (user: CurrentUser) => Promise<CurrentUser | null>;
   postUser: (user: FirebaseAuthTypes.User) => Promise<boolean>;
   getUser: (user: FirebaseAuthTypes.User) => Promise<CurrentUser | false>;
 }
@@ -53,22 +56,36 @@ const useAuthStore = create(
             return true;
           }
 
-          await firestore().collection('user').doc().set(
-            {
-              uid: user.uid,
-              displayName: user.displayName,
-              email: user.email,
-              createdAt: firestore.FieldValue.serverTimestamp(),
-              lastLogin: firestore.FieldValue.serverTimestamp(),
-            },
-            {merge: true},
-          );
+          await firestore()
+            .collection('user')
+            .doc()
+            .set(
+              {
+                uid: user.uid,
+                displayName: user.displayName || getRandomMathNickname(),
+                email: user.email,
+                createdAt: firestore.FieldValue.serverTimestamp(),
+                lastLogin: firestore.FieldValue.serverTimestamp(),
+              },
+              {merge: true},
+            );
 
           console.log('사용자 정보가 Firestore에 저장되었습니다.');
         } catch (error) {
           console.error('가입 오류:', error);
         }
         return true;
+      },
+      isDuplicatedEmail: async (email: string) => {
+        const emailCheckQuery = firestore()
+          .collection('user')
+          .where('email', '==', email);
+        const isRegistedEmail = await emailCheckQuery.get();
+
+        if (!isRegistedEmail.empty) {
+          return true;
+        }
+        return false;
       },
       updateUser: async (user: CurrentUser) => {
         try {
@@ -105,10 +122,10 @@ const useAuthStore = create(
             return currentUser;
           }
           console.log('noUser');
-          return false;
+          return null;
         } catch (error) {
           console.log('updateUser error', user, error);
-          return false;
+          return null;
         }
       },
       getUser: async (user: FirebaseAuthTypes.User) => {

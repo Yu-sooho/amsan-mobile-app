@@ -23,7 +23,7 @@ export const eng: LanguageProps = {
   info: '정보',
   ranking: 'ranking',
   logout: 'Logout',
-  logintError: 'fail to login',
+  loginError: 'fail to login',
   confirm: 'OK',
   result: 'Result',
   retry: 'Retry',
@@ -38,6 +38,7 @@ export const eng: LanguageProps = {
   noRankingList: 'no Ranking list',
   failedEdit: '수정에 실패했습니다. 다시 시도해주세요.',
   successEdit: '수정되었습니다.',
+  duplicatedEmail: '중복되는 이메일입니다.',
 
   isLogout: '로그아웃 시,\n기록 및 랭킹을 남길 수 없게됩니다.',
 };
@@ -65,7 +66,7 @@ export const kor: LanguageProps = {
   info: '정보',
   ranking: '랭킹',
   logout: '로그아웃',
-  logintError: '로그인에 실패했습니다',
+  loginError: '로그인에 실패했습니다',
   confirm: '확인',
   result: '결과',
   retry: '다시 시도',
@@ -80,6 +81,7 @@ export const kor: LanguageProps = {
   noRankingList: '랭킹 정보가 없습니다',
   failedEdit: '수정에 실패했습니다. 다시 시도해주세요.',
   successEdit: '수정되었습니다.',
+  duplicatedEmail: '중복되는 이메일입니다.',
 
   isLogout: '기록 및 랭킹을 남길 수 없게됩니다.',
 };

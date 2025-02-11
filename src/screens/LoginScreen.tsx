@@ -61,13 +61,13 @@ const LoginScreen: React.FC = () => {
       await GoogleSignin.hasPlayServices();
       const signInResult = await GoogleSignin.signIn();
       if (!isSuccessResponse(signInResult)) {
-        showToast({text: selectedLanguage.logintError});
+        showToast({text: selectedLanguage.loginError});
         return;
       }
 
       const idToken = signInResult.data?.idToken;
       if (!idToken) {
-        showToast({text: selectedLanguage.logintError});
+        showToast({text: selectedLanguage.loginError});
         return;
       }
 
@@ -76,7 +76,7 @@ const LoginScreen: React.FC = () => {
       setIsLoading(false);
     } catch (error) {
       console.log(`googleLogin error ${error}`);
-      showToast({text: selectedLanguage.logintError});
+      showToast({text: selectedLanguage.loginError});
       setIsLoading(false);
     }
   };
@@ -101,7 +101,7 @@ const LoginScreen: React.FC = () => {
         const response = await appleAuthAndroid.signIn();
         const {id_token, nonce} = response;
         if (!id_token) {
-          showToast({text: selectedLanguage.logintError});
+          showToast({text: selectedLanguage.loginError});
           setIsLoading(false);
           return;
         }
@@ -114,7 +114,7 @@ const LoginScreen: React.FC = () => {
         setIsLoading(false);
       } catch (error) {
         console.log(`appleLogin error ${error}`);
-        showToast({text: selectedLanguage.logintError});
+        showToast({text: selectedLanguage.loginError});
         setIsLoading(false);
       }
       setIsLoading(false);
@@ -137,7 +137,7 @@ const LoginScreen: React.FC = () => {
       setIsLoading(false);
     } catch (error) {
       console.log(`appleLogin error ${error}`);
-      showToast({text: selectedLanguage.logintError});
+      showToast({text: selectedLanguage.loginError});
       setIsLoading(false);
       return;
     }
