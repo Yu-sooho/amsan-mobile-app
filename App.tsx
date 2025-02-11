@@ -1,6 +1,13 @@
 import {NavigationContainer} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
-import {Platform, StyleSheet, Text, View} from 'react-native';
+import {
+  // eslint-disable-next-line react-native/split-platform-components
+  PermissionsAndroid,
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import {RootStackNavigator} from './src';
 import {useAppStateStore, useAuthStore, useThemeStore} from './src/stores';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
@@ -159,6 +166,23 @@ const PermissionIos = () => {
 };
 
 const PermissionAndroid = () => {
+  const requestMessage = async () => {
+    await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+    );
+  };
+
+  const checkApplicationPermission = async () => {
+    const authorizationStatus = await PermissionsAndroid.check(
+      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+    );
+
+    if (!authorizationStatus) requestMessage();
+  };
+
+  useEffect(() => {
+    checkApplicationPermission();
+  }, []);
   return null;
 };
 
