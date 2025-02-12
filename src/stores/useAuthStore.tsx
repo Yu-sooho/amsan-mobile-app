@@ -112,6 +112,7 @@ const useAuthStore = create(
               createdAt: userData.createdAt,
               lastLogin: userData.lastLogin,
               firebaseToken: userData.firebaseToken,
+              isAgreeNotification1: userData.isAgreeNotification1,
               ...userData,
             };
             console.log('updateUser success', currentUser);
@@ -146,6 +147,7 @@ const useAuthStore = create(
             createdAt: userData.createdAt,
             lastLogin: userData.lastLogin,
             firebaseToken: userData.firebaseToken,
+            isAgreeNotification1: userData.isAgreeNotification1,
             ...userData,
           };
 

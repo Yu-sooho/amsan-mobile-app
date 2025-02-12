@@ -7,8 +7,6 @@ interface AppState {
   setIsLoading: (value: boolean) => void;
   playCount: number;
   setPlayCount: (value: number) => void;
-  isActiveAlram: boolean;
-  setIsActiveAlram: (value: boolean) => void;
   appState: AppStateStatus;
   setAppState: (value: AppStateStatus) => void;
 }
@@ -18,8 +16,6 @@ const useAppStateStore = create<AppState>()(
     set => ({
       isLoading: false,
       setIsLoading: value => set(() => ({isLoading: value})),
-      isActiveAlram: false,
-      setIsActiveAlram: value => set(() => ({isActiveAlram: value})),
       playCount: 5,
       setPlayCount: value => set(() => ({playCount: value})),
       appState: 'active',
@@ -31,7 +27,6 @@ const useAppStateStore = create<AppState>()(
       partialize: state =>
         ({
           playCount: state.playCount,
-          isActiveAlram: state.isActiveAlram,
         }) as Partial<AppState>,
     },
   ),

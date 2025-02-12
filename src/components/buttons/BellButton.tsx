@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, TouchableOpacity} from 'react-native';
 import {IconBell} from '../icons';
 import {sizeConverter} from '../../utils';
-import {useAppStateStore} from '../../stores';
+import {useAuthStore} from '../../stores';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackProps} from '../../types';
@@ -14,7 +14,7 @@ type BellButtonProps = {
 const BellButton: React.FC<BellButtonProps> = ({onPress}) => {
   const navigation =
     useNavigation<StackNavigationProp<RootStackProps, 'MainScreen'>>();
-  const {isActiveAlram} = useAppStateStore();
+  const {userInfo} = useAuthStore();
 
   const styles = StyleSheet.create({
     container: {
@@ -31,12 +31,19 @@ const BellButton: React.FC<BellButtonProps> = ({onPress}) => {
       onPress();
       return;
     }
+    if (!userInfo?.isAgreeNotification1) {
+      navigation.navigate('AlramScreen');
+      return;
+    }
     navigation.navigate('AlramListScreen');
   };
 
   return (
     <TouchableOpacity onPress={onPressDefault} style={styles.container}>
-      <IconBell size={sizeConverter(24)} isActive={isActiveAlram} />
+      <IconBell
+        size={sizeConverter(24)}
+        isActive={userInfo?.isAgreeNotification1 || false}
+      />
     </TouchableOpacity>
   );
 };

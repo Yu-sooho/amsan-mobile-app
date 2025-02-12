@@ -14,4 +14,5 @@ export interface CurrentUser extends BasicUser {
   profileImageUrl128?: string;
   profileImageUrl256?: string;
   profileImageUrl512?: string;
+  isAgreeNotification1: boolean;
 }

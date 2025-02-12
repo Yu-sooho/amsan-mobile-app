@@ -9,14 +9,20 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import {useAppStateStore, useLanguageStore, useThemeStore} from '../stores';
+import {
+  useAppStateStore,
+  useAuthStore,
+  useLanguageStore,
+  useThemeStore,
+} from '../stores';
 import {sizeConverter} from '../utils';
 import messaging from '@react-native-firebase/messaging';
 
 const AlramScreen: React.FC = () => {
   const {selectedTheme} = useThemeStore();
   const {selectedLanguage} = useLanguageStore();
-  const {isActiveAlram, setIsActiveAlram, appState} = useAppStateStore();
+  const {appState} = useAppStateStore();
+  const {userInfo, updateUser, setUserInfo} = useAuthStore();
 
   const styles = StyleSheet.create({
     container: {
@@ -29,8 +35,17 @@ const AlramScreen: React.FC = () => {
     },
   });
 
-  const onPressSwitch = () => {
-    if (isActiveAlram) {
+  const setIsActiveAlram = async (value: boolean) => {
+    if (!userInfo) return;
+    const user = await updateUser({
+      ...userInfo,
+      isAgreeNotification1: value,
+    });
+    setUserInfo(user);
+  };
+
+  const onPressSwitch = async () => {
+    if (userInfo?.isAgreeNotification1) {
       setIsActiveAlram(false);
       return;
     }
@@ -90,7 +105,7 @@ const AlramScreen: React.FC = () => {
         <SwitchButton
           text={selectedLanguage.alram}
           onPress={onPressSwitch}
-          value={isActiveAlram}
+          value={userInfo?.isAgreeNotification1 || false}
         />
       </View>
     </SafeAreaView>

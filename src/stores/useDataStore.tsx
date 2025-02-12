@@ -402,6 +402,8 @@ const useDataStore = create<DataState>()(
             email: userData.email,
             createdAt: userData.createdAt,
             lastLogin: userData.lastLogin,
+            firebaseToken: userData.firebaseToken,
+            isAgreeNotification1: userData.isAgreeNotification1,
             ...userData,
           };
 
