@@ -1,6 +1,11 @@
 import React, {useEffect} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {ArrowButton, CustomHeader, UserImageButton} from '../components';
+import {
+  ArrowButton,
+  CustomHeader,
+  UserImageButton,
+  BellButton,
+} from '../components';
 import {
   ScrollView,
   StyleSheet,
@@ -118,6 +123,7 @@ const MyInfoScreen: React.FC = () => {
         isHaveBack={true}
         isHaveOption={false}
         title={selectedLanguage.myInfo}
+        rightContent={() => <BellButton />}
       />
       <ScrollView bounces={false}>
         <View style={styles.content}>
@@ -170,5 +176,4 @@ const LogoutButton: React.FC<{onPress: () => void}> = ({onPress}) => {
     </TouchableOpacity>
   );
 };
-
 export default MyInfoScreen;

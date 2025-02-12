@@ -12,6 +12,7 @@ export type RootStackProps = {
   MyInfoScreen: undefined;
   LoginScreen: undefined;
   HistoryScreen: {user?: CurrentUser} | undefined;
+  AlramListScreen: undefined;
   UserInfoScreen: {
     uid: string;
   };

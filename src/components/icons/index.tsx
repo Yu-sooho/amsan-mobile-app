@@ -1,5 +1,6 @@
 export {default as IconSetting} from './IconSetting';
 export {default as IconBack} from './IconBack';
+export {default as IconBell} from './IconBell';
 export {default as IconNext} from './IconNext';
 export {default as IconCheck} from './IconCheck';
 export {default as IconPlus} from './IconPlus';
@@ -15,3 +16,4 @@ export {default as IconClose} from './IconClose';
 export {default as IconHistory} from './IconHistory';
 export {default as IconRanking} from './IconRanking';
 export {default as IconSliders} from './IconSliders';
+export {default as IconTrash} from './IconTrash';

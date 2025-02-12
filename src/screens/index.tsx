@@ -4,6 +4,7 @@ export {default as AlramScreen} from './AlramScreen';
 export {default as FontSizeScreen} from './FontSizeScreen';
 export {default as LanguageScreen} from './LanguageScreen';
 export {default as ThemeScreen} from './ThemeScreen';
+export {default as AlramListScreen} from './AlramListScreen';
 export {default as PlayScreen} from './PlayScreen';
 export {default as MyInfoScreen} from './MyInfoScreen';
 export {default as LoginScreen} from './LoginScreen';

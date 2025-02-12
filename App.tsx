@@ -26,7 +26,7 @@ function App(): React.JSX.Element {
   const {selectedTheme} = useThemeStore();
   const {font14Bold} = useTextStyles();
   const {isLoading} = useAppStateStore();
-  const {isLogin, setIsLogin, setLoginData, postUser, getUser, setUserInfo} =
+  const {setIsLogin, setLoginData, postUser, getUser, setUserInfo} =
     useAuthStore();
   const [initializing, setInitializing] = useState(true);
 
