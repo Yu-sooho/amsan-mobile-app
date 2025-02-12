@@ -82,6 +82,11 @@ const CustomPopupScreen: React.FC = () => {
     }
   };
 
+  const onPressConfirm = async () => {
+    navigation.goBack();
+    await onPressOk();
+  };
+
   return (
     <TouchableOpacity
       onPress={onPressBack}
@@ -105,7 +110,7 @@ const CustomPopupScreen: React.FC = () => {
             </TouchableOpacity>
           </View>
           <View style={styles.rightButton}>
-            <TouchableOpacity onPress={onPressOk} style={styles.button}>
+            <TouchableOpacity onPress={onPressConfirm} style={styles.button}>
               <Text style={styles.buttonText}>{selectedLanguage.confirm}</Text>
             </TouchableOpacity>
           </View>

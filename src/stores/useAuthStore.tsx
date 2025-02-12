@@ -9,8 +9,6 @@ import {getRandomMathNickname} from '../utils';
 interface AuthState {
   isLogin: boolean;
   setIsLogin: (value: boolean) => void;
-  token: string | null | undefined;
-  setToken: (value: string | null | undefined) => void;
 
   loginData: FirebaseAuthTypes.User | null;
   setLoginData: (loginData: FirebaseAuthTypes.User | null) => void;
@@ -30,9 +28,6 @@ const useAuthStore = create(
     set => ({
       isLogin: false,
       setIsLogin: (value: boolean) => set(() => ({isLogin: value})),
-      token: null,
-      setToken: (value: string | null | undefined) =>
-        set(() => ({token: value})),
       loginData: null,
       setLoginData: (loginData: FirebaseAuthTypes.User | null) =>
         set(() => ({loginData})),
@@ -116,6 +111,7 @@ const useAuthStore = create(
               email: userData.email,
               createdAt: userData.createdAt,
               lastLogin: userData.lastLogin,
+              firebaseToken: userData.firebaseToken,
               ...userData,
             };
             console.log('updateUser success', currentUser);
@@ -149,6 +145,7 @@ const useAuthStore = create(
             email: userData.email,
             createdAt: userData.createdAt,
             lastLogin: userData.lastLogin,
+            firebaseToken: userData.firebaseToken,
             ...userData,
           };
 

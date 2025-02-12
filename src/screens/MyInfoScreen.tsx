@@ -23,7 +23,6 @@ const MyInfoScreen: React.FC = () => {
   const {selectedTheme} = useThemeStore();
   const {selectedLanguage} = useLanguageStore();
   const {
-    setToken,
     setIsLogin,
     isLogin,
     loginData,
@@ -105,7 +104,6 @@ const MyInfoScreen: React.FC = () => {
     await googleLogout();
     auth().signOut();
     setLoginData(null);
-    setToken(null);
     setIsLogin(false);
     setUserInfo(null);
   };
