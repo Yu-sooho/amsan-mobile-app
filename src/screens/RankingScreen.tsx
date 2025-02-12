@@ -143,9 +143,9 @@ const RankingScreen: React.FC = () => {
     if (operation) {
       if (operation === 'plus') onPressSortType(sortTypes[0]);
       if (operation === 'division') onPressSortType(sortTypes[1]);
-      if (operation === 'multiply') onPressSortType(sortTypes[3]);
-      if (operation === 'subtraction') onPressSortType(sortTypes[4]);
-      if (operation === 'mix') onPressSortType(sortTypes[5]);
+      if (operation === 'multiply') onPressSortType(sortTypes[2]);
+      if (operation === 'subtraction') onPressSortType(sortTypes[3]);
+      if (operation === 'mix') onPressSortType(sortTypes[4]);
     }
   }, []);
 

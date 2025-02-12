@@ -89,7 +89,6 @@ const PermissionIos = ({initializing}: {initializing: boolean}) => {
         ...userInfo,
         firebaseToken: token,
       };
-      console.log('FCM', token);
       if (token !== userInfo.firebaseToken) {
         const res = await updateUser(user);
         setUserInfo(res);
@@ -138,7 +137,6 @@ const PermissionAndroid = ({initializing}: {initializing: boolean}) => {
         ...userInfo,
         firebaseToken: token,
       };
-      console.log('FCM', token);
       if (token !== userInfo.firebaseToken) {
         const res = await updateUser(user);
         setUserInfo(res);

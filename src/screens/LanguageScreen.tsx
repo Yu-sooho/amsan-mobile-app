@@ -4,7 +4,7 @@ import {CheckButton, CustomHeader} from '../components';
 import {StyleSheet, View} from 'react-native';
 import {sizeConverter} from '../utils';
 import {language} from '../resources';
-import {useLanguageStore, useThemeStore} from '../stores';
+import {useDataStore, useLanguageStore, useThemeStore} from '../stores';
 
 const LanguageScreen: React.FC = () => {
   const {selectedTheme} = useThemeStore();
@@ -31,11 +31,14 @@ const LanguageScreen: React.FC = () => {
 
 const Content: React.FC = () => {
   const {selectedLanguage, selectLanguage} = useLanguageStore();
+  const {changedSelectedLanguage} = useDataStore();
 
   const onPressKor = () => {
+    changedSelectedLanguage('kor');
     selectLanguage(language.kor);
   };
   const onPressEng = () => {
+    changedSelectedLanguage('eng');
     selectLanguage(language.eng);
   };
 

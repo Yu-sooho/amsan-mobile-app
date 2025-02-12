@@ -3,8 +3,10 @@ export type LanguageTypes = {
   eng: LanguageProps;
 };
 
+export type LanguageId = 'kor' | 'eng';
+
 export type LanguageProps = {
-  id: 'kor' | 'eng';
+  id: LanguageId;
   // screen
   settingScreen: string;
   infoEditScreen: string;

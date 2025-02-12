@@ -2,7 +2,7 @@ import {create} from 'zustand';
 import firestore, {
   FirebaseFirestoreTypes,
 } from '@react-native-firebase/firestore';
-import {HistoryProps, PlayType, QuestionType} from '../types';
+import {HistoryProps, LanguageId, PlayType, QuestionType} from '../types';
 import useAuthStore from './useAuthStore';
 import storage from '@react-native-firebase/storage';
 import ImageResizer from '@bam.tech/react-native-image-resizer';
@@ -11,10 +11,13 @@ import {createJSONStorage, persist} from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {CurrentUser} from '../types/AuthTypes';
 import useAppStateStore from './useAppStateStore';
+import useLanguageStore from './useLanguageStore';
+import {language} from '../resources';
 
 interface DataState {
   selectedSortType: string;
   setSelectedSortType: (sortType: string) => void;
+  changedSelectedLanguage: (languageId: LanguageId) => void;
   updateHistory: (
     questionsList: QuestionType[],
     operation: PlayType,
@@ -53,8 +56,8 @@ interface DataState {
 
 const useDataStore = create<DataState>()(
   persist(
-    set => ({
-      selectedSortType: 'mix',
+    (set, get) => ({
+      selectedSortType: useLanguageStore.getState().selectedLanguage.mix,
       setSelectedSortType: (value: string) =>
         set(() => ({selectedSortType: value})),
       updateHistory: async (questionsList, operation) => {
@@ -413,6 +416,29 @@ const useDataStore = create<DataState>()(
           console.error('Error fetching history:', error);
           return undefined;
         }
+      },
+      changedSelectedLanguage: (languageId: LanguageId) => {
+        const sortTypes = [
+          useLanguageStore.getState().selectedLanguage.plus,
+          useLanguageStore.getState().selectedLanguage.division,
+          useLanguageStore.getState().selectedLanguage.multiply,
+          useLanguageStore.getState().selectedLanguage.subtraction,
+          useLanguageStore.getState().selectedLanguage.mix,
+        ];
+        const findIndex = sortTypes.findIndex(
+          element => element === get().selectedSortType,
+        );
+
+        get().setSelectedSortType(language[languageId].mix);
+
+        if (findIndex === 0)
+          get().setSelectedSortType(language[languageId].plus);
+        if (findIndex === 1)
+          get().setSelectedSortType(language[languageId].division);
+        if (findIndex === 2)
+          get().setSelectedSortType(language[languageId].multiply);
+        if (findIndex === 3)
+          get().setSelectedSortType(language[languageId].subtraction);
       },
     }),
     {
