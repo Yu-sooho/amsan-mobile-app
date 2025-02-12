@@ -1,13 +1,6 @@
 import {NavigationContainer} from '@react-navigation/native';
 import React, {useEffect, useRef, useState} from 'react';
-import {
-  // eslint-disable-next-line react-native/split-platform-components
-  PermissionsAndroid,
-  Platform,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import {Platform, StyleSheet, Text, View} from 'react-native';
 import {RootStackNavigator} from './src';
 import {useAppStateStore, useAuthStore, useThemeStore} from './src/stores';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
@@ -18,9 +11,12 @@ import {LoadingScreen} from './src/screens';
 import {useTextStyles} from './src/styles';
 import mobileAds from 'react-native-google-mobile-ads';
 import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
-import {AppStateChecker, BannerAds, InterstitialAds} from './src/components';
-import messaging from '@react-native-firebase/messaging';
-import {CurrentUser} from './src/types/AuthTypes';
+import {
+  AppStateChecker,
+  BannerAds,
+  InterstitialAds,
+  OnMessage,
+} from './src/components';
 
 function App(): React.JSX.Element {
   const {selectedTheme} = useThemeStore();
@@ -95,7 +91,7 @@ function App(): React.JSX.Element {
       await fetchUserData(user);
       console.log('login user:', user);
     }
-    await transparencyCheck();
+    if (Platform.OS === 'ios') await transparencyCheck();
     if (initializing) setInitializing(false);
   };
 
@@ -131,113 +127,11 @@ function App(): React.JSX.Element {
       <BannerAds />
       <InterstitialAds />
       <AppStateChecker />
-      {Platform.OS === 'android' ? (
-        <PermissionAndroid initializing={initializing} />
-      ) : (
-        <PermissionIos initializing={initializing} />
-      )}
+      <OnMessage initializing={initializing} />
       {isLoading && <LoadingScreen />}
       <Toast config={toastConfig} />
     </>
   );
 }
-
-const PermissionIos = ({initializing}: {initializing: boolean}) => {
-  const {userInfo, setUserInfo, updateUser} = useAuthStore();
-
-  const requestMessage = async () => {
-    const authStatus = await messaging().requestPermission();
-    const enabled =
-      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-
-    if (enabled) {
-      console.log('Authorization status:', authStatus);
-      getToken();
-    }
-  };
-
-  const checkApplicationPermission = async () => {
-    const authorizationStatus = await messaging().requestPermission();
-    if (authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED) {
-      getToken();
-    } else if (
-      authorizationStatus === messaging.AuthorizationStatus.PROVISIONAL
-    ) {
-      requestMessage();
-    } else {
-      requestMessage();
-    }
-  };
-
-  const getToken = async () => {
-    if (!userInfo) return;
-    try {
-      const token = await messaging().getToken();
-      const user: CurrentUser = {
-        ...userInfo,
-        firebaseToken: token,
-      };
-      if (!userInfo.firebaseToken) {
-        updateUser(user);
-      }
-      setUserInfo(user);
-    } catch (error) {
-      console.log(`getToken`, error);
-    }
-  };
-
-  useEffect(() => {
-    if (!initializing) checkApplicationPermission();
-  }, [initializing]);
-
-  return null;
-};
-
-const PermissionAndroid = ({initializing}: {initializing: boolean}) => {
-  const {userInfo, setUserInfo, updateUser} = useAuthStore();
-  const requestMessage = async () => {
-    const result = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-    );
-
-    if (result === 'granted') getToken();
-  };
-
-  const checkApplicationPermission = async () => {
-    const authorizationStatus = await PermissionsAndroid.check(
-      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-    );
-
-    if (!authorizationStatus) {
-      requestMessage();
-      return;
-    }
-    getToken();
-  };
-
-  const getToken = async () => {
-    if (!userInfo) return;
-    try {
-      const token = await messaging().getToken();
-      const user: CurrentUser = {
-        ...userInfo,
-        firebaseToken: token,
-      };
-      if (!userInfo.firebaseToken) {
-        updateUser(user);
-      }
-      setUserInfo(user);
-    } catch (error) {
-      console.log(`getToken`, error);
-    }
-  };
-
-  useEffect(() => {
-    if (!initializing) checkApplicationPermission();
-  }, [initializing]);
-
-  return null;
-};
 
 export default App;
