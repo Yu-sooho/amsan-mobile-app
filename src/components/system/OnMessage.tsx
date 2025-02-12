@@ -4,19 +4,47 @@ import {
   // eslint-disable-next-line react-native/split-platform-components
   PermissionsAndroid,
 } from 'react-native';
-import messaging from '@react-native-firebase/messaging';
+import messaging, {
+  FirebaseMessagingTypes,
+} from '@react-native-firebase/messaging';
 import {useAuthStore} from '../../stores';
 import {CurrentUser} from '../../types/AuthTypes';
+import notifee from '@notifee/react-native';
 
 type OnMessageProps = {
   initializing: boolean;
 };
 
 const OnMessage: React.FC<OnMessageProps> = ({initializing}) => {
-  useEffect(() => {
-    const unsubscribe = messaging().onMessage(async remoteMessage => {
-      console.log('Message handled in the foreground!', remoteMessage);
+  const onDisplayNotification = async (
+    remoteMessage: FirebaseMessagingTypes.RemoteMessage,
+  ) => {
+    const {notification} = remoteMessage;
+
+    const channelId = await notifee.createChannel({
+      id: 'default',
+      name: 'Default Channel',
     });
+
+    await notifee.displayNotification({
+      title: notification?.title,
+      body: notification?.body,
+      android: {
+        channelId,
+        pressAction: {
+          id: 'default',
+        },
+      },
+    });
+  };
+
+  useEffect(() => {
+    const unsubscribe = messaging().onMessage(
+      async (remoteMessage: FirebaseMessagingTypes.RemoteMessage) => {
+        console.log('foreground onMessage', remoteMessage);
+        onDisplayNotification(remoteMessage);
+      },
+    );
     return unsubscribe;
   }, []);
 
@@ -62,8 +90,10 @@ const PermissionIos = ({initializing}: {initializing: boolean}) => {
         firebaseToken: token,
       };
       console.log('FCM', token);
-      if (!userInfo.firebaseToken) {
-        updateUser(user);
+      if (token !== userInfo.firebaseToken) {
+        const res = await updateUser(user);
+        setUserInfo(res);
+        return;
       }
       setUserInfo(user);
     } catch (error) {
@@ -109,8 +139,10 @@ const PermissionAndroid = ({initializing}: {initializing: boolean}) => {
         firebaseToken: token,
       };
       console.log('FCM', token);
-      if (!userInfo.firebaseToken) {
-        updateUser(user);
+      if (token !== userInfo.firebaseToken) {
+        const res = await updateUser(user);
+        setUserInfo(res);
+        return;
       }
       setUserInfo(user);
     } catch (error) {
