@@ -42,6 +42,7 @@ export const eng: LanguageProps = {
   duplicatedEmail: '중복되는 이메일입니다.',
 
   isLogout: '로그아웃 시,\n기록 및 랭킹을 남길 수 없게됩니다.',
+  noNetwork: '인터넷 연결이 없습니다.',
 };
 
 export const kor: LanguageProps = {
@@ -86,4 +87,5 @@ export const kor: LanguageProps = {
   duplicatedEmail: '중복되는 이메일입니다.',
 
   isLogout: '기록 및 랭킹을 남길 수 없게됩니다.',
+  noNetwork: '인터넷 연결이 없습니다.',
 };

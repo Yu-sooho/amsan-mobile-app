@@ -5,6 +5,7 @@ import {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {CurrentUser} from '../types/AuthTypes';
 import {getRandomMathNickname} from '../utils';
+import useAppStateStore from './useAppStateStore';
 
 interface AuthState {
   isLogin: boolean;
@@ -13,7 +14,7 @@ interface AuthState {
   loginData: FirebaseAuthTypes.User | null;
   setLoginData: (loginData: FirebaseAuthTypes.User | null) => void;
 
-  userInfo: CurrentUser | null;
+  userInfo: CurrentUser | null | undefined;
   setUserInfo: (user: CurrentUser | null) => void;
 
   isDuplicatedEmail: (email: string) => Promise<boolean>;
@@ -23,8 +24,8 @@ interface AuthState {
   getUser: (user: FirebaseAuthTypes.User) => Promise<CurrentUser | false>;
 }
 
-const useAuthStore = create(
-  persist<AuthState>(
+const useAuthStore = create<AuthState>()(
+  persist(
     set => ({
       isLogin: false,
       setIsLogin: (value: boolean) => set(() => ({isLogin: value})),
@@ -161,6 +162,15 @@ const useAuthStore = create(
     {
       name: 'auth-storage',
       storage: createJSONStorage(() => AsyncStorage),
+      onRehydrateStorage: () => state => {
+        if (state) {
+          useAppStateStore.getState().setHydrated('useAuthStore');
+        }
+      },
+      partialize: state =>
+        ({
+          userInfo: state.userInfo ?? null,
+        }) as Partial<AuthState>,
     },
   ),
 );

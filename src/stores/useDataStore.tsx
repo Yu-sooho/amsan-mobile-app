@@ -10,6 +10,7 @@ import {Platform} from 'react-native';
 import {createJSONStorage, persist} from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {CurrentUser} from '../types/AuthTypes';
+import useAppStateStore from './useAppStateStore';
 
 interface DataState {
   selectedSortType: string;
@@ -417,9 +418,14 @@ const useDataStore = create<DataState>()(
     {
       name: 'data-storage',
       storage: createJSONStorage(() => AsyncStorage),
+      onRehydrateStorage: () => state => {
+        if (state) {
+          useAppStateStore.getState().setHydrated('useDataStore');
+        }
+      },
       partialize: state =>
         ({
-          selectedSortType: state.selectedSortType ?? 'mix',
+          selectedSortType: state.selectedSortType,
         }) as Partial<DataState>,
     },
   ),

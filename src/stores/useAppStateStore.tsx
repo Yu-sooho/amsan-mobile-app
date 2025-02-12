@@ -9,6 +9,10 @@ interface AppState {
   setPlayCount: (value: number) => void;
   appState: AppStateStatus;
   setAppState: (value: AppStateStatus) => void;
+  isFirstStart: boolean;
+  setIsFirstStart: (value: boolean) => void;
+  hydratedStores: string[];
+  setHydrated: (storeName: string) => void;
 }
 
 const useAppStateStore = create<AppState>()(
@@ -20,13 +24,28 @@ const useAppStateStore = create<AppState>()(
       setPlayCount: value => set(() => ({playCount: value})),
       appState: 'active',
       setAppState: (value: AppStateStatus) => set(() => ({appState: value})),
+      isFirstStart: false,
+      setIsFirstStart: value => set(() => ({isFirstStart: value})),
+      hydratedStores: [],
+      setHydrated: (storeName: string) =>
+        set(state => ({
+          hydratedStores: Array.from(
+            new Set([...state.hydratedStores, storeName]),
+          ),
+        })),
     }),
     {
       name: 'appState-storage',
       storage: createJSONStorage(() => AsyncStorage),
+      onRehydrateStorage: () => state => {
+        if (state) {
+          state.setHydrated('useAppStateStore');
+        }
+      },
       partialize: state =>
         ({
           playCount: state.playCount,
+          isFirstStart: state.isFirstStart,
         }) as Partial<AppState>,
     },
   ),

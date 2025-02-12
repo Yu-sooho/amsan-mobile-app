@@ -48,4 +48,5 @@ export type LanguageProps = {
 
   //Popup Message
   isLogout: string;
+  noNetwork: string;
 };
