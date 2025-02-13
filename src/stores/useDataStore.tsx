@@ -2,7 +2,13 @@ import {create} from 'zustand';
 import firestore, {
   FirebaseFirestoreTypes,
 } from '@react-native-firebase/firestore';
-import {HistoryProps, LanguageId, PlayType, QuestionType} from '../types';
+import {
+  HistoryProps,
+  LanguageId,
+  NotificationProps,
+  PlayType,
+  QuestionType,
+} from '../types';
 import useAuthStore from './useAuthStore';
 import storage from '@react-native-firebase/storage';
 import ImageResizer from '@bam.tech/react-native-image-resizer';
@@ -50,8 +56,18 @@ interface DataState {
       }
     | undefined
   >;
-
   getOtherUser: (uid: string) => Promise<CurrentUser | undefined>;
+  getNotification: (
+    pageSize?: number,
+    lastDoc?: FirebaseFirestoreTypes.DocumentSnapshot | undefined | null,
+    uid?: string,
+  ) => Promise<
+    | {
+        notification: NotificationProps[];
+        lastDoc: FirebaseFirestoreTypes.DocumentSnapshot | null;
+      }
+    | undefined
+  >;
 }
 
 const useDataStore = create<DataState>()(
@@ -439,6 +455,50 @@ const useDataStore = create<DataState>()(
           get().setSelectedSortType(language[languageId].multiply);
         if (findIndex === 3)
           get().setSelectedSortType(language[languageId].subtraction);
+      },
+      getNotification: async (pageSize = 20, lastDoc = null, uid) => {
+        try {
+          const {loginData} = useAuthStore.getState();
+          if (!loginData) {
+            console.log('User is not logged in.');
+            return undefined;
+          }
+
+          let query = firestore()
+            .collection('notification')
+            .where('uid', '==', uid || loginData.uid)
+            .orderBy('timestamp', 'desc')
+            .limit(pageSize);
+
+          if (lastDoc) {
+            query = query.startAfter(lastDoc);
+          }
+
+          const querySnapshot = await query.get();
+
+          if (querySnapshot.empty) {
+            return {notification: [], lastDoc: null};
+          }
+
+          const notification: NotificationProps[] = querySnapshot.docs.map(
+            doc => ({
+              id: doc.id,
+              timestamp: doc.data().timestamp ?? firestore.Timestamp.now(),
+              uid: doc.data().uid,
+              title: doc.data().title,
+              body: doc.data().body,
+            }),
+          );
+
+          const lastVisibleDoc =
+            querySnapshot.docs[querySnapshot.docs.length - 1] || null;
+          const notifications = {notification, lastDoc: lastVisibleDoc};
+          console.log('getNotification', notifications);
+          return notifications;
+        } catch (error) {
+          console.error('Error fetching history:', error);
+          return undefined;
+        }
       },
     }),
     {

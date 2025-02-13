@@ -15,3 +15,11 @@ export type HistoryProps = {
   operation: PlayType;
   correctCount: number;
 } & BasicUser;
+
+export type NotificationProps = {
+  id: string;
+  title: string;
+  body: string;
+  timestamp: Timestamp;
+  uid: string;
+};
