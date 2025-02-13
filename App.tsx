@@ -119,7 +119,12 @@ function App(): React.JSX.Element {
   };
 
   const getCountryCode = () => {
-    if (isFirstStart) return;
+    if (isFirstStart) {
+      if (selectedLanguage.id === language.kor.id) selectLanguage(language.kor);
+      if (selectedLanguage.id === language.eng.id) selectLanguage(language.eng);
+      console.log('language setting : ', selectedLanguage.id);
+      return;
+    }
     const country = RNLocalize.getCountry();
     if (country === 'KR') {
       selectLanguage(language.kor);

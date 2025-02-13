@@ -13,7 +13,7 @@ export {default as RankingScreen} from './RankingScreen';
 export {default as HistoryScreen} from './HistoryScreen';
 export {default as InfoEditScreen} from './InfoEditScreen';
 export {default as UserInfoScreen} from './UserInfoScreen';
-
+export {default as HistorySettingScreen} from './HistorySettingScreen';
 export {default as LoadingScreen} from './LoadingScreen';
 
 export * from './modals';

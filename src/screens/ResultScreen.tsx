@@ -8,6 +8,7 @@ import {
 } from '../components';
 import {
   useAppStateStore,
+  useAuthStore,
   useDataStore,
   useLanguageStore,
   useThemeStore,
@@ -66,6 +67,7 @@ const ResultScreen: React.FC<ResultScreenProps> = () => {
   const {selectedLanguage} = useLanguageStore();
   const {updateHistory, updateLeaderboard} = useDataStore();
   const {playCount, setPlayCount} = useAppStateStore();
+  const {userInfo} = useAuthStore();
   const isUpdated = useRef<boolean>(false);
 
   const correctQuestions = questionsList.filter(q => q.isCorrect === true);
@@ -90,12 +92,12 @@ const ResultScreen: React.FC<ResultScreenProps> = () => {
 
   const update = async () => {
     if (isUpdated.current) return;
-    const result = await updateHistory(questionsList, operation);
-    await updateLeaderboard(questionsList, operation);
+    if (userInfo?.isAgreeUploadHistory)
+      await updateHistory(questionsList, operation);
+    if (userInfo?.isAgreeUploadRanking)
+      await updateLeaderboard(questionsList, operation);
     setPlayCount(playCount - 1);
-    if (result) {
-      isUpdated.current = true;
-    }
+    isUpdated.current = true;
   };
 
   useEffect(() => {

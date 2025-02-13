@@ -10,9 +10,12 @@ export interface CurrentUser extends BasicUser {
   createdAt: Timestamp;
   email: string;
   lastLogin: Timestamp;
-  firebaseToken: string;
+  firebaseToken?: string;
   profileImageUrl128?: string;
   profileImageUrl256?: string;
   profileImageUrl512?: string;
   isAgreeNotification1: boolean;
+
+  isAgreeUploadHistory?: boolean;
+  isAgreeUploadRanking?: boolean;
 }

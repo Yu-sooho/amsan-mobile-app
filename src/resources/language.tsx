@@ -4,6 +4,7 @@ export const eng: LanguageProps = {
   id: 'eng',
 
   settingScreen: 'Setting',
+  historySettingScreen: '기록 설정',
   infoEditScreen: '내 정보 수정',
 
   theme: 'Theme',
@@ -32,6 +33,8 @@ export const eng: LanguageProps = {
   name: 'name',
   save: 'save',
   alram: 'alram',
+  autoUplodeHistory: '기록 저장',
+  autoUplodeRanking: '랭킹 저장',
 
   serverError: 'server error please retry',
   noHistoryList: 'no History list',
@@ -40,6 +43,8 @@ export const eng: LanguageProps = {
   successEdit: '수정되었습니다.',
   duplicatedEmail: '중복되는 이메일입니다.',
   haveToLogin: '로그인을 해야합니다.',
+  autoUplodeHistoryAlert: `더 이상 내 모든 기록이 저장되지 않습니다.`,
+  autoUplodeRankingyAlert: `더 이상 랭킹에 등재되지 않습니다.`,
 
   isLogout: '로그아웃 시,\n기록 및 랭킹을 남길 수 없게됩니다.',
   noNetwork: '인터넷 연결이 없습니다.',
@@ -49,6 +54,7 @@ export const kor: LanguageProps = {
   id: 'kor',
 
   settingScreen: '설정',
+  historySettingScreen: '기록 설정',
   infoEditScreen: '내 정보 수정',
 
   theme: '테마',
@@ -77,6 +83,8 @@ export const kor: LanguageProps = {
   name: '이름',
   save: '저장',
   alram: '알람',
+  autoUplodeHistory: '기록 저장',
+  autoUplodeRanking: '랭킹 저장',
 
   serverError: '다시 시도 해주세요',
   noHistoryList: '기록이 없습니다',
@@ -85,6 +93,8 @@ export const kor: LanguageProps = {
   successEdit: '수정되었습니다.',
   duplicatedEmail: '중복되는 이메일입니다.',
   haveToLogin: '로그인을 해야합니다.',
+  autoUplodeHistoryAlert: `더 이상 내 모든 기록이 저장되지 않습니다.`,
+  autoUplodeRankingyAlert: `더 이상 랭킹에 등재되지 않습니다.`,
 
   isLogout: '기록 및 랭킹을 남길 수 없게됩니다.',
   noNetwork: '인터넷 연결이 없습니다.',

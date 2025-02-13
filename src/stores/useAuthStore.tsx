@@ -52,14 +52,21 @@ const useAuthStore = create<AuthState>()(
             return true;
           }
 
+          const currentUser = {
+            uid: user.uid,
+            displayName: user.displayName || getRandomMathNickname(),
+            email: user.email || '',
+            isAgreeNotification1: false,
+            isAgreeUploadHistory: true,
+            isAgreeUploadRanking: true,
+          };
+
           await firestore()
             .collection('user')
             .doc()
             .set(
               {
-                uid: user.uid,
-                displayName: user.displayName || getRandomMathNickname(),
-                email: user.email,
+                ...currentUser,
                 createdAt: firestore.FieldValue.serverTimestamp(),
                 lastLogin: firestore.FieldValue.serverTimestamp(),
               },

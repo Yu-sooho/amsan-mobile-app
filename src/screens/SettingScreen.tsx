@@ -39,14 +39,21 @@ const Content: React.FC = () => {
   const onPressTheme = () => {
     navigation.navigate('ThemeScreen');
   };
+
   const onPressLanguage = () => {
     navigation.navigate('LanguageScreen');
   };
+
   const onPressFontSize = () => {
     navigation.navigate('FontSizeScreen');
   };
+
   const onPressAlram = () => {
     navigation.navigate('AlramScreen');
+  };
+
+  const HistorySettingScreen = () => {
+    navigation.navigate('HistorySettingScreen');
   };
 
   const styles = StyleSheet.create({
@@ -60,6 +67,11 @@ const Content: React.FC = () => {
 
   return (
     <View style={styles.container}>
+      <ArrowButton
+        style={styles.arrowButton}
+        onPress={HistorySettingScreen}
+        text={selectedLanguage.save}
+      />
       <ArrowButton
         style={styles.arrowButton}
         onPress={onPressAlram}

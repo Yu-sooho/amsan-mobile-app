@@ -10,6 +10,7 @@ export type LanguageProps = {
   // screen
   settingScreen: string;
   infoEditScreen: string;
+  historySettingScreen: string;
 
   // components
   theme: string;
@@ -37,6 +38,8 @@ export type LanguageProps = {
   email: string;
   name: string;
   save: string;
+  autoUplodeHistory: string;
+  autoUplodeRanking: string;
 
   // Toast Message
   loginError: string;
@@ -47,6 +50,8 @@ export type LanguageProps = {
   successEdit: string;
   duplicatedEmail: string;
   haveToLogin: string;
+  autoUplodeHistoryAlert: string;
+  autoUplodeRankingyAlert: string;
 
   //Popup Message
   isLogout: string;

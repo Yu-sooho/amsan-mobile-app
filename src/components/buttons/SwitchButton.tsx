@@ -2,10 +2,12 @@ import React, {useEffect, useRef} from 'react';
 import {
   Animated,
   Dimensions,
+  StyleProp,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
+  ViewStyle,
 } from 'react-native';
 import {useTextStyles} from '../../styles';
 import {sizeConverter} from '../../utils';
@@ -15,6 +17,7 @@ interface CustomSwitch {
   onPress: () => void;
   value: boolean;
   size?: number;
+  contentContainerStyle?: StyleProp<ViewStyle>;
 }
 
 interface SwitchButtonProps extends CustomSwitch {
@@ -85,7 +88,12 @@ const CustomSwitch: React.FC<CustomSwitch> = ({
   );
 };
 
-const SwitchButton: React.FC<SwitchButtonProps> = ({onPress, text, value}) => {
+const SwitchButton: React.FC<SwitchButtonProps> = ({
+  onPress,
+  text,
+  value,
+  contentContainerStyle,
+}) => {
   const textStyles = useTextStyles();
   const styles = StyleSheet.create({
     container: {
@@ -101,7 +109,9 @@ const SwitchButton: React.FC<SwitchButtonProps> = ({onPress, text, value}) => {
     },
   });
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
+    <TouchableOpacity
+      style={[styles.container, contentContainerStyle]}
+      onPress={onPress}>
       <Text style={styles.text}>{text}</Text>
       <View pointerEvents='none'>
         <CustomSwitch value={value} onPress={onPress} />

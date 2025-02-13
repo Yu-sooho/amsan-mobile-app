@@ -115,6 +115,10 @@ const MainScreen: React.FC = () => {
       <View style={styles.content}>
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
           <Text style={[font20Bold, styles.title]}>암산</Text>
+
+          <TouchableOpacity style={{position: 'absolute', right: 0, bottom: 0}}>
+            <Text>123</Text>
+          </TouchableOpacity>
         </View>
         <PlayButton
           text={selectedLanguage.plus}
