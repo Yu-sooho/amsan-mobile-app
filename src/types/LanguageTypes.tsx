@@ -25,7 +25,6 @@ export type LanguageProps = {
   subtraction: string;
   multiply: string;
   mix: string;
-  custom: string;
   myInfo: string;
   info: string;
   ranking: string;
@@ -47,6 +46,7 @@ export type LanguageProps = {
   failedEdit: string;
   successEdit: string;
   duplicatedEmail: string;
+  haveToLogin: string;
 
   //Popup Message
   isLogout: string;

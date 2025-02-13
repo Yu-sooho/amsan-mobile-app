@@ -2,7 +2,6 @@ import React from 'react';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {
   CustomHeader,
-  IconCustom,
   IconDivide,
   IconMinus,
   IconMix,
@@ -105,12 +104,6 @@ const MainScreen: React.FC = () => {
       level: 1,
     });
   };
-  const onPressCustom = () => {
-    navigation.navigate('PlayScreen', {
-      operation: 'custom',
-      level: 1,
-    });
-  };
 
   return (
     <SafeAreaView edges={['bottom']} style={styles.container}>
@@ -151,12 +144,6 @@ const MainScreen: React.FC = () => {
           text={selectedLanguage.mix}
           onPress={onPressMix}
           Icon={<IconMix />}
-          style={styles.button}
-        />
-        <PlayButton
-          text={selectedLanguage.custom}
-          onPress={onPressCustom}
-          Icon={<IconCustom size={sizeConverter(22)} />}
           style={styles.button}
         />
       </View>

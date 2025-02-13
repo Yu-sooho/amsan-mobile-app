@@ -67,6 +67,8 @@ const RankingScreen: React.FC = () => {
   const {selectedTheme} = useThemeStore();
   const {selectedLanguage} = useLanguageStore();
   const {loginData} = useAuthStore();
+  const {isLogin} = useAuthStore();
+  const {font20Bold} = useTextStyles();
   const {getRanking, setSelectedSortType, selectedSortType} = useDataStore();
   const isLoading = useRef<boolean>(false);
   const isEnded = useRef<boolean>(false);
@@ -88,6 +90,11 @@ const RankingScreen: React.FC = () => {
       paddingBottom: sizeConverter(76),
       paddingTop: sizeConverter(24),
     },
+    noLoginContainer: {
+      alignItems: 'center',
+      flex: 1,
+      paddingTop: sizeConverter(120),
+    },
   });
 
   const sortTypes = [
@@ -108,11 +115,11 @@ const RankingScreen: React.FC = () => {
     if (selectedSortType === sortTypes[2]) return 'multiply';
     if (selectedSortType === sortTypes[3]) return 'subtraction';
     if (selectedSortType === sortTypes[4]) return 'mix';
-    return 'custom';
+    return 'mix';
   };
 
   const fetchData = async () => {
-    if (isLoading.current || isEnded.current) return;
+    if (isLoading.current || isEnded.current || !isLogin) return;
     isLoading.current = true;
     const data = await getRanking(checkType(), PAGE_SIZE, lastDoc.current);
     if (!data) {
@@ -183,38 +190,43 @@ const RankingScreen: React.FC = () => {
           />
         )}
       />
-
-      <FlatList
-        data={rankingList}
-        contentContainerStyle={styles.list}
-        renderItem={({item, index}) => (
-          <RenderItem onPress={onPressUserImage} item={item} index={index} />
-        )}
-        keyExtractor={item => `${item?.id}`}
-        onEndReached={onEndReached}
-        ListEmptyComponent={() => (
-          <ListEmptyComponent
-            isRefresh={isRefreshing.current}
-            isLoading={isLoading.current}
-            isEnded={isEnded.current}
-          />
-        )}
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefreshing.current}
-            onRefresh={onRefresh}
-            tintColor={selectedTheme.textColor}
-            colors={[selectedTheme.textColor]}
-          />
-        }
-        ListFooterComponent={() => (
-          <ListFooterComponent
-            isRefresh={isRefreshing.current}
-            isEnded={isEnded.current}
-          />
-        )}
-        scrollEventThrottle={200}
-      />
+      {isLogin ? (
+        <FlatList
+          data={rankingList}
+          contentContainerStyle={styles.list}
+          renderItem={({item, index}) => (
+            <RenderItem onPress={onPressUserImage} item={item} index={index} />
+          )}
+          keyExtractor={item => `${item?.id}`}
+          onEndReached={onEndReached}
+          ListEmptyComponent={() => (
+            <ListEmptyComponent
+              isRefresh={isRefreshing.current}
+              isLoading={isLoading.current}
+              isEnded={isEnded.current}
+            />
+          )}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing.current}
+              onRefresh={onRefresh}
+              tintColor={selectedTheme.textColor}
+              colors={[selectedTheme.textColor]}
+            />
+          }
+          ListFooterComponent={() => (
+            <ListFooterComponent
+              isRefresh={isRefreshing.current}
+              isEnded={isEnded.current}
+            />
+          )}
+          scrollEventThrottle={200}
+        />
+      ) : (
+        <View style={styles.noLoginContainer}>
+          <Text style={font20Bold}>{selectedLanguage.haveToLogin}</Text>
+        </View>
+      )}
     </SafeAreaView>
   );
 };

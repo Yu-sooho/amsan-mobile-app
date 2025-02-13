@@ -1,6 +1,11 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {useDataStore, useLanguageStore, useThemeStore} from '../stores';
+import {
+  useAuthStore,
+  useDataStore,
+  useLanguageStore,
+  useThemeStore,
+} from '../stores';
 import {CustomHeader} from '../components';
 import {HistoryProps, RootStackProps} from '../types';
 import {formatTimestamp, showToast, sizeConverter} from '../utils';
@@ -20,6 +25,8 @@ const HistoryScreen: React.FC = () => {
   const {selectedTheme} = useThemeStore();
   const {selectedLanguage} = useLanguageStore();
   const {getHistory} = useDataStore();
+  const {isLogin} = useAuthStore();
+  const {font20Bold} = useTextStyles();
   const isLoading = useRef<boolean>(false);
   const isEnded = useRef<boolean>(false);
   const isRefreshing = useRef<boolean>(false);
@@ -37,10 +44,15 @@ const HistoryScreen: React.FC = () => {
       paddingBottom: sizeConverter(76),
       paddingTop: sizeConverter(24),
     },
+    noLoginContainer: {
+      alignItems: 'center',
+      flex: 1,
+      paddingTop: sizeConverter(120),
+    },
   });
 
   const fetchData = async () => {
-    if (isLoading.current || isEnded.current) return;
+    if (isLoading.current || isEnded.current || !isLogin) return;
     isLoading.current = true;
     const data = await getHistory(PAGE_SIZE, lastDoc.current, user?.uid);
     if (!data) {
@@ -83,35 +95,43 @@ const HistoryScreen: React.FC = () => {
             : selectedLanguage.history
         }
       />
-      <FlatList
-        data={historyList}
-        contentContainerStyle={styles.list}
-        renderItem={({item, index}) => <RenderItem item={item} index={index} />}
-        keyExtractor={item => `${item?.id}`}
-        ListEmptyComponent={() => (
-          <ListEmptyComponent
-            isRefresh={isRefreshing.current}
-            isLoading={isLoading.current}
-            isEnded={isEnded.current}
-          />
-        )}
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefreshing.current}
-            onRefresh={onRefresh}
-            tintColor={selectedTheme.textColor}
-            colors={[selectedTheme.textColor]}
-          />
-        }
-        ListFooterComponent={() => (
-          <ListFooterComponent
-            isRefresh={isRefreshing.current}
-            isEnded={isEnded.current}
-          />
-        )}
-        onEndReached={onEndReached}
-        scrollEventThrottle={200}
-      />
+      {isLogin ? (
+        <FlatList
+          data={historyList}
+          contentContainerStyle={styles.list}
+          renderItem={({item, index}) => (
+            <RenderItem item={item} index={index} />
+          )}
+          keyExtractor={item => `${item?.id}`}
+          ListEmptyComponent={() => (
+            <ListEmptyComponent
+              isRefresh={isRefreshing.current}
+              isLoading={isLoading.current}
+              isEnded={isEnded.current}
+            />
+          )}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing.current}
+              onRefresh={onRefresh}
+              tintColor={selectedTheme.textColor}
+              colors={[selectedTheme.textColor]}
+            />
+          }
+          ListFooterComponent={() => (
+            <ListFooterComponent
+              isRefresh={isRefreshing.current}
+              isEnded={isEnded.current}
+            />
+          )}
+          onEndReached={onEndReached}
+          scrollEventThrottle={200}
+        />
+      ) : (
+        <View style={styles.noLoginContainer}>
+          <Text style={font20Bold}>{selectedLanguage.haveToLogin}</Text>
+        </View>
+      )}
     </View>
   );
 };
@@ -127,6 +147,7 @@ const ListEmptyComponent = ({
 }) => {
   const {selectedLanguage} = useLanguageStore();
   const {font20Bold} = useTextStyles();
+
   const styles = StyleSheet.create({
     container: {
       paddingTop: sizeConverter(120),

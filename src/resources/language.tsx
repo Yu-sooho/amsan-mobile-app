@@ -18,7 +18,6 @@ export const eng: LanguageProps = {
   subtraction: 'subtraction',
   multiply: 'multiply',
   mix: 'mix',
-  custom: 'custom',
   myInfo: 'My Info',
   info: '정보',
   ranking: 'ranking',
@@ -40,6 +39,7 @@ export const eng: LanguageProps = {
   failedEdit: '수정에 실패했습니다. 다시 시도해주세요.',
   successEdit: '수정되었습니다.',
   duplicatedEmail: '중복되는 이메일입니다.',
+  haveToLogin: '로그인을 해야합니다.',
 
   isLogout: '로그아웃 시,\n기록 및 랭킹을 남길 수 없게됩니다.',
   noNetwork: '인터넷 연결이 없습니다.',
@@ -63,7 +63,6 @@ export const kor: LanguageProps = {
   subtraction: '빼기',
   multiply: '곱하기',
   mix: '혼합',
-  custom: '커스텀',
   myInfo: '내 정보',
   info: '정보',
   ranking: '랭킹',
@@ -85,6 +84,7 @@ export const kor: LanguageProps = {
   failedEdit: '수정에 실패했습니다. 다시 시도해주세요.',
   successEdit: '수정되었습니다.',
   duplicatedEmail: '중복되는 이메일입니다.',
+  haveToLogin: '로그인을 해야합니다.',
 
   isLogout: '기록 및 랭킹을 남길 수 없게됩니다.',
   noNetwork: '인터넷 연결이 없습니다.',

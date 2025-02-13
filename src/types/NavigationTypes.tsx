@@ -37,10 +37,4 @@ export type RootStackProps = {
   };
 };
 
-export type PlayType =
-  | 'plus'
-  | 'division'
-  | 'multiply'
-  | 'mix'
-  | 'subtraction'
-  | 'custom';
+export type PlayType = 'plus' | 'division' | 'multiply' | 'mix' | 'subtraction';

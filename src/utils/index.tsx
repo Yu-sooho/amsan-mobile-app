@@ -59,62 +59,56 @@ export const createQuestion = ({
   const operations = ['+', '-', '*', '/'];
   const questionParts = [];
 
-  switch (type) {
-    case 'plus':
-      for (let i = 0; i < term; i++) {
-        numbers.push(getRandomInt({min, max}));
-      }
-      question = numbers.join(' + ');
-      answer = numbers.reduce((acc, val) => acc + val, 0);
-      break;
-
-    case 'subtraction':
-      for (let i = 0; i < term; i++) {
-        numbers.push(getRandomInt({min, max}));
-      }
-      question = numbers.join(' - ');
-      answer = numbers.reduce((acc, val) => acc - val);
-      break;
-
-    case 'multiply':
-      for (let i = 0; i < term; i++) {
-        numbers.push(getRandomInt({min, max}));
-      }
-      question = numbers.join(' × ');
-      answer = numbers.reduce((acc, val) => acc * val, 1);
-      break;
-
-    case 'division':
+  if (type === 'plus') {
+    for (let i = 0; i < term; i++) {
       numbers.push(getRandomInt({min, max}));
-      for (let i = 1; i < term; i++) {
-        const divisor = getRandomInt({min: 2, max: Math.max(2, max / 5)});
-        numbers.push(divisor);
-      }
-      question = numbers.join(' ÷ ');
-      answer = parseFloat(numbers.reduce((acc, val) => acc / val).toFixed(2));
-      break;
-
-    case 'mix':
-      for (let i = 0; i < term; i++) {
-        const num = getRandomInt({min, max});
-        questionParts.push(num);
-
-        if (i < term - 1) {
-          const operation =
-            operations[getRandomInt({min: 0, max: operations.length - 1})];
-          questionParts.push(operation);
-        }
-      }
-
-      question = questionParts.join(' ');
-      answer = eval(question);
-
-      break;
-
-    default:
-      console.log(operation, level);
-      throw new Error('Invalid operation type');
+    }
+    question = numbers.join(' + ');
+    answer = numbers.reduce((acc, val) => acc + val, 0);
+    return {question, answer};
   }
+  if (type === 'division') {
+    numbers.push(getRandomInt({min, max}));
+    for (let i = 1; i < term; i++) {
+      const divisor = getRandomInt({min: 2, max: Math.max(2, max / 5)});
+      numbers.push(divisor);
+    }
+    question = numbers.join(' ÷ ');
+    answer = parseFloat(numbers.reduce((acc, val) => acc / val).toFixed(2));
+    return {question, answer};
+  }
+
+  if (type === 'subtraction') {
+    for (let i = 0; i < term; i++) {
+      numbers.push(getRandomInt({min, max}));
+    }
+    question = numbers.join(' - ');
+    answer = numbers.reduce((acc, val) => acc - val);
+    return {question, answer};
+  }
+
+  if (type === 'multiply') {
+    for (let i = 0; i < term; i++) {
+      numbers.push(getRandomInt({min, max}));
+    }
+    question = numbers.join(' × ');
+    answer = numbers.reduce((acc, val) => acc * val, 1);
+    return {question, answer};
+  }
+
+  for (let i = 0; i < term; i++) {
+    const num = getRandomInt({min, max});
+    questionParts.push(num);
+
+    if (i < term - 1) {
+      const operation =
+        operations[getRandomInt({min: 0, max: operations.length - 1})];
+      questionParts.push(operation);
+    }
+  }
+
+  question = questionParts.join(' ');
+  answer = eval(question);
 
   return {question, answer};
 };
