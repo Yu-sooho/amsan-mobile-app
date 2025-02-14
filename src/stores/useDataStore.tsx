@@ -27,11 +27,16 @@ interface DataState {
   updateHistory: (
     questionsList: QuestionType[],
     operation: PlayType,
+    level: number,
   ) => Promise<boolean>;
-  getMyLeaderboard: (operation: string) => Promise<HistoryProps | undefined>;
+  getMyLeaderboard: (
+    operation: string,
+    level: number,
+  ) => Promise<HistoryProps | undefined>;
   updateLeaderboard: (
     questionsList: QuestionType[],
     operation: PlayType,
+    level: number,
   ) => Promise<boolean>;
   uploadImage: (pathToFile: string) => Promise<string[] | undefined>;
   getHistory: (
@@ -47,6 +52,7 @@ interface DataState {
   >;
   getRanking: (
     operation: PlayType,
+    level: number,
     pageSize?: number,
     lastDoc?: FirebaseFirestoreTypes.DocumentSnapshot | undefined | null,
   ) => Promise<
@@ -76,7 +82,7 @@ const useDataStore = create<DataState>()(
       selectedSortType: useLanguageStore.getState().selectedLanguage.mix,
       setSelectedSortType: (value: string) =>
         set(() => ({selectedSortType: value})),
-      updateHistory: async (questionsList, operation) => {
+      updateHistory: async (questionsList, operation, level) => {
         try {
           const {userInfo} = useAuthStore.getState();
 
@@ -99,6 +105,7 @@ const useDataStore = create<DataState>()(
                 operation: operation,
                 correctCount,
                 displayName: userInfo.displayName,
+                level: level,
                 profileImageUrl:
                   userInfo.profileImageUrl256 ||
                   userInfo.profileImageUrl512 ||
@@ -117,7 +124,7 @@ const useDataStore = create<DataState>()(
           return false;
         }
       },
-      getMyLeaderboard: async operation => {
+      getMyLeaderboard: async (operation, level) => {
         const {userInfo} = useAuthStore.getState();
         if (!userInfo) {
           console.log('getMyLeaderboard 로그인 실패');
@@ -129,6 +136,7 @@ const useDataStore = create<DataState>()(
             .collection('leaderboard')
             .where('uid', '==', userInfo.uid)
             .where('operation', '==', operation)
+            .where('level', '==', level)
             .orderBy('correctCount', 'desc')
             .orderBy('timestamp', 'desc')
             .limit(1)
@@ -156,6 +164,7 @@ const useDataStore = create<DataState>()(
             operation: bestHistory.operation,
             correctCount: bestHistory.correctCount,
             displayName: bestHistory.displayName,
+            level: bestHistory.level,
             profileImageUrl:
               bestHistory.profileImageUrl256 ||
               bestHistory.profileImageUrl512 ||
@@ -170,7 +179,7 @@ const useDataStore = create<DataState>()(
           return undefined;
         }
       },
-      updateLeaderboard: async (questionsList, operation) => {
+      updateLeaderboard: async (questionsList, operation, level) => {
         try {
           const {userInfo} = useAuthStore.getState();
           const {getMyLeaderboard} = useDataStore.getState();
@@ -180,7 +189,7 @@ const useDataStore = create<DataState>()(
             return false;
           }
 
-          const myLearderBoader = await getMyLeaderboard(operation);
+          const myLearderBoader = await getMyLeaderboard(operation, level);
 
           const correctCount = Array.isArray(questionsList)
             ? questionsList.filter(q => q.isCorrect).length
@@ -204,6 +213,7 @@ const useDataStore = create<DataState>()(
             operation: operation,
             correctCount,
             displayName: userInfo.displayName,
+            level: level,
             profileImageUrl:
               userInfo.profileImageUrl256 ||
               userInfo.profileImageUrl512 ||
@@ -316,6 +326,7 @@ const useDataStore = create<DataState>()(
             operation: doc.data().operation,
             correctCount: doc.data().correctCount,
             displayName: doc.data().displayName,
+            level: doc.data().level,
             profileImageUrl:
               doc.data().profileImageUrl256 ||
               doc.data().profileImageUrl512 ||
@@ -335,7 +346,7 @@ const useDataStore = create<DataState>()(
         }
       },
 
-      getRanking: async (operation, pageSize = 30, lastDoc = null) => {
+      getRanking: async (operation, level, pageSize = 30, lastDoc = null) => {
         try {
           const {loginData} = useAuthStore.getState();
           if (!loginData) {
@@ -361,6 +372,7 @@ const useDataStore = create<DataState>()(
             .orderBy('correctCount', 'desc')
             .orderBy('timestamp', 'desc')
             .where('operation', '==', operation)
+            .where('level', '==', level)
             .where('timestamp', '>=', startTimestamp)
             .where('timestamp', '<=', endTimestamp)
             .limit(pageSize);
@@ -370,8 +382,6 @@ const useDataStore = create<DataState>()(
           }
 
           const querySnapshot = await query.get();
-
-          console.log(querySnapshot);
 
           if (querySnapshot.empty) {
             return {rankingData: [], lastDoc: null};
@@ -384,6 +394,7 @@ const useDataStore = create<DataState>()(
             operation: doc.data().operation,
             correctCount: doc.data().correctCount,
             displayName: doc.data().displayName,
+            level: doc.data().level,
             profileImageUrl:
               doc.data().profileImageUrl256 ||
               doc.data().profileImageUrl512 ||

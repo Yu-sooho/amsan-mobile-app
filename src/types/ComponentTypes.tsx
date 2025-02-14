@@ -14,6 +14,7 @@ export type HistoryProps = {
   id: string;
   operation: PlayType;
   correctCount: number;
+  level: number;
 } & BasicUser;
 
 export type NotificationProps = {

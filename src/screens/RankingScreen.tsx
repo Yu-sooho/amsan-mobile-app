@@ -70,6 +70,7 @@ const RankingScreen: React.FC = () => {
   const {isLogin} = useAuthStore();
   const {font20Bold} = useTextStyles();
   const {getRanking, setSelectedSortType, selectedSortType} = useDataStore();
+  const [level, setLevel] = useState<string>('1');
   const isLoading = useRef<boolean>(false);
   const isEnded = useRef<boolean>(false);
   const isRefreshing = useRef<boolean>(false);
@@ -85,10 +86,19 @@ const RankingScreen: React.FC = () => {
       backgroundColor: selectedTheme.backgourndColor,
       flex: 1,
     },
+    levelButton: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      height: sizeConverter(44),
+      justifyContent: 'flex-end',
+      marginTop: sizeConverter(24),
+      paddingHorizontal: sizeConverter(20),
+      width: sizeConverter(360),
+    },
     list: {
       alignItems: 'center',
       paddingBottom: sizeConverter(76),
-      paddingTop: sizeConverter(24),
+      paddingTop: sizeConverter(12),
     },
     noLoginContainer: {
       alignItems: 'center',
@@ -105,8 +115,14 @@ const RankingScreen: React.FC = () => {
     selectedLanguage.mix,
   ];
 
+  const levels = ['1', '2', '3', '4', '5'];
+
   const onPressSortType = (value: string) => {
     setSelectedSortType(value);
+  };
+
+  const onPressLevel = (value: string) => {
+    setLevel(value);
   };
 
   const checkType = (): PlayType => {
@@ -121,7 +137,12 @@ const RankingScreen: React.FC = () => {
   const fetchData = async () => {
     if (isLoading.current || isEnded.current || !isLogin) return;
     isLoading.current = true;
-    const data = await getRanking(checkType(), PAGE_SIZE, lastDoc.current);
+    const data = await getRanking(
+      checkType(),
+      parseInt(level),
+      PAGE_SIZE,
+      lastDoc.current,
+    );
     if (!data) {
       showToast({text: selectedLanguage.serverError});
       isEnded.current = true;
@@ -165,7 +186,7 @@ const RankingScreen: React.FC = () => {
 
   useEffect(() => {
     onRefresh();
-  }, [selectedSortType]);
+  }, [selectedSortType, level]);
 
   const navigation =
     useNavigation<StackNavigationProp<RootStackProps, 'RankingScreen'>>();
@@ -176,6 +197,14 @@ const RankingScreen: React.FC = () => {
         uid: item.uid,
       });
     }
+  };
+
+  const openModal = () => {
+    navigation.navigate('CustomModalScreen', {
+      selectedValue: level,
+      valueList: levels,
+      onPress: onPressLevel,
+    });
   };
 
   return (
@@ -190,6 +219,12 @@ const RankingScreen: React.FC = () => {
           />
         )}
       />
+      <View>
+        <TouchableOpacity style={styles.levelButton} onPress={openModal}>
+          <Text style={font20Bold}>{'Lv.  '}</Text>
+          <Text style={font20Bold}>{level}</Text>
+        </TouchableOpacity>
+      </View>
       {isLogin ? (
         <FlatList
           data={rankingList}

@@ -6,6 +6,7 @@ import {
   IconMinus,
   IconMix,
   IconMultiply,
+  IconNoAds,
   IconPlus,
   IconUser,
   PlayButton,
@@ -16,7 +17,12 @@ import {useTextStyles} from '../styles';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackProps} from '../types/NavigationTypes';
-import {useAuthStore, useLanguageStore, useThemeStore} from '../stores';
+import {
+  useAppStateStore,
+  useAuthStore,
+  useLanguageStore,
+  useThemeStore,
+} from '../stores';
 
 const MyInfoButton = () => {
   const navigation =
@@ -52,8 +58,9 @@ const MainScreen: React.FC = () => {
     useNavigation<StackNavigationProp<RootStackProps, 'MainScreen'>>();
   const {selectedTheme} = useThemeStore();
   const {selectedLanguage} = useLanguageStore();
+  const {level, setLevel} = useAppStateStore();
   const {bottom} = useSafeAreaInsets();
-  const {font20Bold} = useTextStyles();
+  const {font20Bold, font14Bold} = useTextStyles();
 
   const styles = StyleSheet.create({
     button: {
@@ -69,40 +76,81 @@ const MainScreen: React.FC = () => {
       justifyContent: 'flex-end',
       paddingBottom: bottom + sizeConverter(24),
     },
+    levelButton: {
+      alignItems: 'center',
+      bottom: sizeConverter(24),
+      height: sizeConverter(44),
+      justifyContent: 'flex-end',
+      left: 0,
+      position: 'absolute',
+      width: sizeConverter(44),
+    },
+    levelText: {
+      ...font14Bold,
+      fontSize: sizeConverter(32),
+      textAlign: 'center',
+    },
+    noAdsButton: {
+      alignItems: 'center',
+      bottom: sizeConverter(24),
+      height: sizeConverter(44),
+      justifyContent: 'flex-end',
+      position: 'absolute',
+      right: 0,
+      width: sizeConverter(44),
+    },
+    noAdsText: {
+      ...font14Bold,
+      marginTop: sizeConverter(4),
+      textAlign: 'center',
+    },
     title: {
       fontSize: sizeConverter(102),
+    },
+    titleView: {
+      alignItems: 'center',
+      flex: 1,
+      justifyContent: 'center',
     },
   });
 
   const onPressPlus = () => {
     navigation.navigate('PlayScreen', {
       operation: 'plus',
-      level: 1,
+      level: level,
     });
   };
   const onPressMultiply = () => {
     navigation.navigate('PlayScreen', {
       operation: 'multiply',
-      level: 1,
+      level: level,
     });
   };
   const onPressSubtraction = () => {
     navigation.navigate('PlayScreen', {
       operation: 'subtraction',
-      level: 1,
+      level: level,
     });
   };
   const onPressDivision = () => {
     navigation.navigate('PlayScreen', {
       operation: 'division',
-      level: 1,
+      level: level,
     });
   };
   const onPressMix = () => {
     navigation.navigate('PlayScreen', {
       operation: 'mix',
-      level: 1,
+      level: level,
     });
+  };
+
+  const onPressLevel = () => {
+    if (level >= 5) {
+      setLevel(1);
+      return;
+    }
+    setLevel(level + 1);
   };
 
   return (
@@ -113,11 +161,16 @@ const MainScreen: React.FC = () => {
         leftContent={MyInfoButton}
       />
       <View style={styles.content}>
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <View style={styles.titleView}>
           <Text style={[font20Bold, styles.title]}>암산</Text>
 
-          <TouchableOpacity style={{position: 'absolute', right: 0, bottom: 0}}>
-            <Text>123</Text>
+          <TouchableOpacity style={styles.noAdsButton}>
+            <IconNoAds />
+            <Text style={styles.noAdsText}>{'NoAds'}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={onPressLevel} style={styles.levelButton}>
+            <Text style={styles.levelText}>{level}</Text>
+            <Text style={styles.noAdsText}>{'LEVEL'}</Text>
           </TouchableOpacity>
         </View>
         <PlayButton

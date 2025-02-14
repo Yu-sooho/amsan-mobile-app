@@ -93,9 +93,9 @@ const ResultScreen: React.FC<ResultScreenProps> = () => {
   const update = async () => {
     if (isUpdated.current) return;
     if (userInfo?.isAgreeUploadHistory)
-      await updateHistory(questionsList, operation);
+      await updateHistory(questionsList, operation, level);
     if (userInfo?.isAgreeUploadRanking)
-      await updateLeaderboard(questionsList, operation);
+      await updateLeaderboard(questionsList, operation, level);
     setPlayCount(playCount - 1);
     isUpdated.current = true;
   };

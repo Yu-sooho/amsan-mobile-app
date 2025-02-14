@@ -13,6 +13,8 @@ interface AppState {
   setIsFirstStart: (value: boolean) => void;
   hydratedStores: string[];
   setHydrated: (storeName: string) => void;
+  level: number;
+  setLevel: (value: number) => void;
 }
 
 const useAppStateStore = create<AppState>()(
@@ -26,6 +28,8 @@ const useAppStateStore = create<AppState>()(
       setAppState: (value: AppStateStatus) => set(() => ({appState: value})),
       isFirstStart: false,
       setIsFirstStart: value => set(() => ({isFirstStart: value})),
+      level: 1,
+      setLevel: value => set(() => ({level: value})),
       hydratedStores: [],
       setHydrated: (storeName: string) =>
         set(state => ({
@@ -46,6 +50,7 @@ const useAppStateStore = create<AppState>()(
         ({
           playCount: state.playCount,
           isFirstStart: state.isFirstStart,
+          level: state.level,
         }) as Partial<AppState>,
     },
   ),

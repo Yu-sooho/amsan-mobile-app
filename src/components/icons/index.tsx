@@ -17,3 +17,4 @@ export {default as IconHistory} from './IconHistory';
 export {default as IconRanking} from './IconRanking';
 export {default as IconSliders} from './IconSliders';
 export {default as IconTrash} from './IconTrash';
+export {default as IconNoAds} from './IconNoAds';
